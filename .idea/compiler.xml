@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="howaysso-provider" />
+        <module name="howaysso-api" />
+        <module name="howaysso-core" />
+        <module name="howaysso-web" />
+        <module name="howaysso-processor" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="howaysso-api" options="-parameters" />
+      <module name="howaysso-core" options="-parameters" />
+      <module name="howaysso-processor" options="-parameters" />
+      <module name="howaysso-provider" options="-parameters" />
+      <module name="howaysso-web" options="-parameters" />
+    </option>
+  </component>
+</project>

@@ -1,0 +1,21 @@
+server:
+  port: 8081
+  tomcat:
+    uri-encoding: utf-8
+
+spring:
+  application:
+    name: json-service
+  session:
+    store-type: none
+
+  messages:
+    #设定Message bundles的编码，默认: UTF-8
+    encoding: UTF-8
+    #指定message的basename，多个以逗号分隔，如果不加包名的话，默认从classpath路径开始，默认: messages
+    basename: messages/i18n/i18n
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  profiles:
+    active: dev
