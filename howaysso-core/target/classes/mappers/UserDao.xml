@@ -22,6 +22,11 @@
     from user
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectAll"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user
+  </select>
   <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />

@@ -8,6 +8,8 @@ import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.MybatisUtils;
 import org.apache.ibatis.session.SqlSession;
 
+import java.util.List;
+
 public class UserServiceImpl implements UserService {
     private SqlSession sqlSession = MybatisUtils.getSqlSession();
     private UserDao userDao = sqlSession.getMapper(UserDao.class);
@@ -23,6 +25,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findById(int id) {
         return userDao.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userDao.selectAll();
     }
 
     @Override

@@ -4,6 +4,8 @@ import cn.ihoway.entity.User;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface UserDao {
 
@@ -14,6 +16,8 @@ public interface UserDao {
     int insertSelective(User record);
 
     User selectByPrimaryKey(Integer id);
+
+    List<User> selectAll();
 
     User selectByName(String name);
 

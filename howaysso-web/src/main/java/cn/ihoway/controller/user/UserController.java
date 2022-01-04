@@ -1,14 +1,12 @@
 package cn.ihoway.controller.user;
 
-import cn.ihoway.entity.User;
 import cn.ihoway.processor.user.UserLoginProcessor;
 import cn.ihoway.processor.user.UserRegisterProcessor;
+import cn.ihoway.processor.user.UserSearchProcessor;
 import cn.ihoway.processor.user.UserUpdateProcessor;
 import cn.ihoway.processor.user.io.*;
-import cn.ihoway.security.HowayAccessToken;
 import cn.ihoway.type.LoginType;
-import cn.ihoway.type.StatusCode;
-import cn.ihoway.util.HowayEncrypt;
+import cn.ihoway.type.UserSearchType;
 import cn.ihoway.util.HowayResult;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -71,6 +69,29 @@ public class UserController {
         return rs.toString();
     }
 
+
+    @CrossOrigin
+    @RequestMapping(value = "/", method = { RequestMethod.GET })
+    public String selectAllUser(String token){
+        UserSearchProcessor searchProcessor = new UserSearchProcessor();
+        UserSearchInput input = new UserSearchInput();
+        input.inChomm.type = UserSearchType.ALL;
+        input.token = token;
+        UserSearchOutput output = new UserSearchOutput();
+        return searchProcessor.doExcute(input,output).toString();
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/{uid}", method = { RequestMethod.GET })
+    public String selectByUid(String token,@PathVariable("uid") Integer uid){
+        UserSearchProcessor searchProcessor = new UserSearchProcessor();
+        UserSearchInput input = new UserSearchInput();
+        input.inChomm.type = UserSearchType.ONLYID;
+        input.inChomm.uid = uid;
+        input.token = token;
+        UserSearchOutput output = new UserSearchOutput();
+        return searchProcessor.doExcute(input,output).toString();
+    }
 
 
 }

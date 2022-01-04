@@ -19,6 +19,7 @@ public enum StatusCode {
     USERSTATUSERROR(3005,"用户状态异常，请联系管理员"),
     TOKENERROR(3006,"token检查失败"),
     LOGINTYPENOTSURPPORT(3007,"登录方式暂不支持"),
+    SEARCHTYPENOTSUPPORT(3008,"查询方式暂不支持"),
     JAVAEXCEPTION(4001,"java异常"),
     ILLEGALOPERATION(5001,"非法操作");
 
