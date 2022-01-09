@@ -4,9 +4,12 @@ import cn.ihoway.entity.User;
 import cn.ihoway.impl.UserServiceImpl;
 import cn.ihoway.service.UserService;
 import cn.ihoway.type.AlgorithmType;
+import cn.ihoway.type.AuthorityLevel;
+import cn.ihoway.type.StatusCode;
 import cn.ihoway.util.HowayEncrypt;
 import cn.ihoway.util.HowayLog;
 
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -23,10 +26,12 @@ public class HowayAccessToken {
     public static final int ID_PLACEHOLDER = 4; //用户id占用位数
     private static final int ALGORITHM_PLACEHOLDER = 2; //算法位占用位数(固定)
     private static final int NAME_PASSWORD_PLACEHOLDER = 8; //用户名密码占用位数
+    private static final int APP_KEY_PLACEHOLDER = 4;
     private static final int APP_KEY_APP_SECRET_PLACEHOLDER = 6; //key和secert占用位数
     private static final int TIMESTAMP_PLACEHOLDER = 9; //时间戳占用位数（固定）
     private static final int SIGN_PLACEHOLDER = 4; // 签名占用位数
     private static final int EXPIRATION_TIME = 15; // 过期时间 (min)
+    private static final boolean APP_KEY_ENABle = false;
 
     /**
      * 按规则生成token
@@ -51,6 +56,10 @@ public class HowayAccessToken {
         token += HowayEncrypt.encrypt(String.valueOf(secondRandom),AlgorithmType.MD5.getAlgorithm(),ALGORITHM_PLACEHOLDER);
         //用随机算法加密用户名和密码
         token += HowayEncrypt.encrypt(name+password,AlgorithmType.values()[secondRandom].getAlgorithm(),NAME_PASSWORD_PLACEHOLDER);
+        //app_key
+        if(APP_KEY_ENABle){
+            token += appKey.substring(0,APP_KEY_PLACEHOLDER);
+        }
         //两位随机算法
         token += HowayEncrypt.encrypt(String.valueOf(thirdRandom),AlgorithmType.MD5.getAlgorithm(),ALGORITHM_PLACEHOLDER);
         //用随机算法加密appkey和appsecret
@@ -72,17 +81,20 @@ public class HowayAccessToken {
      * @param appSecret appSecret
      * @return true or false
      */
-    protected boolean isToekenRule(String token,String name,String password,String appKey,String appSecret){
+    protected StatusCode isToekenRule(String token,String name,String password,String appKey,String appSecret){
         logger.info("token:"+token);
         int len = HEAD_PLACEHOLDER + ID_PLACEHOLDER + ALGORITHM_PLACEHOLDER*2 + NAME_PASSWORD_PLACEHOLDER + APP_KEY_APP_SECRET_PLACEHOLDER + TIMESTAMP_PLACEHOLDER+SIGN_PLACEHOLDER;
+        if(APP_KEY_ENABle){
+            len += APP_KEY_PLACEHOLDER;
+        }
         if(token.length() != len){
             logger.info("token长度异常！");
-            return false;
+            return StatusCode.TOKENERROR;
         }
         //规则一：前面22经过md5加密后与后四位一致
         if(!token.substring(len-SIGN_PLACEHOLDER,len).equals(HowayEncrypt.encrypt(token.substring(0,len-SIGN_PLACEHOLDER),AlgorithmType.MD5.getAlgorithm(),SIGN_PLACEHOLDER))){
             logger.info("token签名异常！");
-            return false;
+            return StatusCode.TOKENERROR;
         }
 
         int start = HEAD_PLACEHOLDER + ID_PLACEHOLDER;
@@ -91,27 +103,29 @@ public class HowayAccessToken {
         int algorithm = getAlgorithm(token.substring(start,end));
         if(algorithm < 0){
             logger.info("token随机算法1异常");
-            return false;
+            return StatusCode.TOKENERROR;
         }
         start = end;
         end += NAME_PASSWORD_PLACEHOLDER;
         if(!token.substring(start,end).equals(HowayEncrypt.encrypt(name+password,AlgorithmType.values()[algorithm].getAlgorithm(),NAME_PASSWORD_PLACEHOLDER))){
             logger.info("token用户和密码加密异常");
-            return false;
+            return StatusCode.TOKENERROR;
         }
-        //规则三，获取14-15位的第二个随机算法，用该随机算法计算appkey+appSecret与第16-21位字符串一致
+        //todo 规则三，获取app_key，查询数据库中是否存在该key,并获取想应的secret
+
+        //规则四，获取14-15位的第二个随机算法，用该随机算法计算appkey+appSecret与第16-21位字符串一致
         start = end;
         end += ALGORITHM_PLACEHOLDER;
         algorithm = getAlgorithm(token.substring(start,end));
         if(algorithm < 0){
             logger.info("token随机算法2异常");
-            return false;
+            return StatusCode.TOKENERROR;
         }
         start = end;
         end += APP_KEY_APP_SECRET_PLACEHOLDER;
         if(!token.substring(start, end).equals(HowayEncrypt.encrypt(appKey + appSecret, AlgorithmType.values()[algorithm].getAlgorithm(), APP_KEY_APP_SECRET_PLACEHOLDER))){
             logger.info("token key和secret加密异常");
-            return false;
+            return StatusCode.TOKENERROR;
         }
         start = end;
         end += TIMESTAMP_PLACEHOLDER;
@@ -119,17 +133,31 @@ public class HowayAccessToken {
         long diff = (System.currentTimeMillis() - timestamp) / 1000 / 60;
         if(diff > EXPIRATION_TIME){
             logger.info("token已超时");
-            return false;
+            return StatusCode.TOKENTIMEOUT;
         }
-        return true;
+        return StatusCode.SUCCESS;
     }
 
-    public boolean isToekenRule(String token,String appKey,String appSecret){
-        User user = getUserByToken(token);
+    public StatusCode isToekenRule(String token, String appKey, String appSecret, AuthorityLevel limitAuthority) {
+        User user;
+        try {
+            user = getUserByToken(token);
+        } catch (Exception e) {
+            logger.error(Arrays.toString(e.getStackTrace()));
+            return StatusCode.JAVAEXCEPTION;
+        }
+        if(user == null){
+            logger.info("用户不存在");
+            return StatusCode.TOKENERROR;
+        }
+        if(user.getRole() < limitAuthority.getLevel()){
+            logger.info("用户"+user.getName()+"权限不足");
+            return StatusCode.PERMISSIONDENIED;
+        }
         return isToekenRule(token,user.getName(),user.getPassword(),appKey,appSecret);
     }
 
-    public User getUserByToken(String token){
+    public User getUserByToken(String token) throws Exception{
         String uidStr = moveLeftLetter(token.substring(HEAD_PLACEHOLDER,HEAD_PLACEHOLDER + ID_PLACEHOLDER));
         int uid = Integer.parseInt(uidStr);
         return service.findById(uid);
@@ -148,7 +176,7 @@ public class HowayAccessToken {
         }
         return left + str;
     }
-    private String moveLeftLetter(String str){
+    private String moveLeftLetter(String str) throws Exception{
         int index = 0;
         for(int i = 0; i < str.length(); i++){
             char ch = str.charAt(i);

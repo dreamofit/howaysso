@@ -20,6 +20,23 @@
     from site
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from site
+    where name = #{name,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByUrl" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from site
+    where url = #{url,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from site
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from site
     where id = #{id,jdbcType=INTEGER}

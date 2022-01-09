@@ -16,11 +16,12 @@ public enum StatusCode {
     PASSWORDERROR(3002,"密码错误"),
     VERFICATIONCODEERROR(3003,"验证码错误"),
     PERMISSIONDENIED(3004,"权限不足"),
-    USERSTATUSERROR(3005,"用户状态异常，请联系管理员"),
+    USERSTATUSERROR(3005,"用户状态异常，请联系管理员处理"),
     TOKENERROR(3006,"token检查失败"),
-    LOGINTYPENOTSURPPORT(3007,"登录方式暂不支持"),
-    SEARCHTYPENOTSUPPORT(3008,"查询方式暂不支持"),
-    JAVAEXCEPTION(4001,"java异常"),
+    TOKENTIMEOUT(3007,"token超时，请重新登录"),
+    LOGINTYPENOTSURPPORT(3008,"登录方式暂不支持"),
+    SEARCHTYPENOTSUPPORT(3009,"查询方式暂不支持"),
+    JAVAEXCEPTION(4001,"java异常，请联系管理员处理"),
     ILLEGALOPERATION(5001,"非法操作");
 
     private int code;

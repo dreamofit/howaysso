@@ -1,5 +1,8 @@
 package cn.ihoway.type;
 
+/**
+ * 加密算法类型
+ */
 public enum AlgorithmType {
     MD5("MD5"),
     MD2("MD2"),

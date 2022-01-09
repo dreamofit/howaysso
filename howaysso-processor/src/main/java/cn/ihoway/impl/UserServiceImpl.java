@@ -4,16 +4,14 @@ package cn.ihoway.impl;
 import cn.ihoway.dao.UserDao;
 import cn.ihoway.entity.User;
 import cn.ihoway.service.UserService;
-import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.MybatisUtils;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
-    private SqlSession sqlSession = MybatisUtils.getSqlSession();
-    private UserDao userDao = sqlSession.getMapper(UserDao.class);
-    private HowayLog logger = new HowayLog(UserServiceImpl.class);
+    private final SqlSession sqlSession = MybatisUtils.getSqlSession();
+    private final UserDao userDao = sqlSession.getMapper(UserDao.class);
 
     @Override
     public int addUser(User user) {

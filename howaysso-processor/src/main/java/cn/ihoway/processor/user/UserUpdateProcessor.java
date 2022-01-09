@@ -14,8 +14,10 @@ import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Arrays;
+
 /**
- * 用户信息修改处理器
+ * 用户本人信息修改处理器
  */
 @Processor(name = "UserUpdateProcessor",certification = true)
 public class UserUpdateProcessor extends CommonProcessor<UserUpdateInput, UserUpdateOutput> {
@@ -33,10 +35,15 @@ public class UserUpdateProcessor extends CommonProcessor<UserUpdateInput, UserUp
         return StatusCode.SUCCESS;
     }
 
-
     @Override
     protected HowayResult process(UserUpdateInput input, UserUpdateOutput output) {
-        User user = accessToken.getUserByToken(input.token);
+        User user;
+        try {
+            user = accessToken.getUserByToken(input.token);
+        } catch (Exception e) {
+            logger.error(Arrays.toString(e.getStackTrace()));
+            return HowayResult.createFailResult(StatusCode.JAVAEXCEPTION,output);
+        }
         //todo 更新名字也需要更新密码
         if(StringUtils.isNotEmpty(input.inChomm.name)){
             User temp = service.findByName(input.inChomm.name);

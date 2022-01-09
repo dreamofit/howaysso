@@ -5,12 +5,12 @@ import cn.ihoway.entity.User;
 import java.util.List;
 
 public interface UserService {
-    public int addUser(User user);
-    public User findById(int id);
-    public List<User> findAll();
-    public User findByName(String name);
-    public User findByTel(String tel);
-    public User loginByNameAndPass(String name,String password);
-    public User loginByTelAndPass(String tel,String password);
-    public int updateUser(User user);
+    int addUser(User user);
+    User findById(int id);
+    List<User> findAll();
+    User findByName(String name);
+    User findByTel(String tel);
+    User loginByNameAndPass(String name, String password);
+    User loginByTelAndPass(String tel, String password);
+    int updateUser(User user);
 }

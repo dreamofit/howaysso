@@ -1,9 +1,6 @@
 package cn.ihoway.controller.user;
 
-import cn.ihoway.processor.user.UserLoginProcessor;
-import cn.ihoway.processor.user.UserRegisterProcessor;
-import cn.ihoway.processor.user.UserSearchProcessor;
-import cn.ihoway.processor.user.UserUpdateProcessor;
+import cn.ihoway.processor.user.*;
 import cn.ihoway.processor.user.io.*;
 import cn.ihoway.type.LoginType;
 import cn.ihoway.type.UserSearchType;
@@ -66,6 +63,19 @@ public class UserController {
         input.inChomm.email = user.getString("email");
         input.inChomm.site = user.getString("site");
         HowayResult rs = updateProcessor.doExcute(input,output);
+        return rs.toString();
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/{uid}", method = { RequestMethod.PUT })
+    public String updateRole(String token,@PathVariable("uid") Integer uid,@RequestBody JSONObject user){
+        UserUpdateRoleProcessor updateRoleProcessor = new UserUpdateRoleProcessor();
+        UserUpdateInput input = new UserUpdateInput();
+        UserUpdateOutput output = new UserUpdateOutput();
+        input.token = token;
+        input.inChomm.uid = uid;
+        input.inChomm.role = user.getInteger("role");
+        HowayResult rs = updateRoleProcessor.doExcute(input,output);
         return rs.toString();
     }
 

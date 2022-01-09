@@ -16,7 +16,7 @@ class UserLoginProcessorTest {
     @Test
     void process() {
         UserLoginInput input = new UserLoginInput();
-        input.inChomm.name = "张三";
+        input.inChomm.name = "李四";
         input.inChomm.password = "123456";
         UserLoginOutput output = new UserLoginOutput();
         HowayResult result = processor.doExcute(input,output);

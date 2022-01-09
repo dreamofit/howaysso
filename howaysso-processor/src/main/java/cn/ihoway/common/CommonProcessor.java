@@ -5,10 +5,13 @@ import cn.ihoway.annotation.Processor;
 import cn.ihoway.common.io.CommonInput;
 import cn.ihoway.common.io.CommonOutput;
 import cn.ihoway.security.HowayAccessToken;
+import cn.ihoway.type.AuthorityLevel;
 import cn.ihoway.type.StatusCode;
 import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
 import com.alibaba.fastjson.JSON;
+
+import java.util.Arrays;
 
 /**
  * 程序处理器公共类，所有逻辑处理器必须继承该类
@@ -35,11 +38,8 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
      * @param input input
      * @return StatusCode
      */
-    protected StatusCode certification(I input){
-        if(!accessToken.isToekenRule(input.token,APP_KEY,APP_SECRET)){
-            return StatusCode.TOKENERROR;
-        }
-        return StatusCode.SUCCESS;
+    protected StatusCode certification(I input, AuthorityLevel limitAuthority) {
+        return accessToken.isToekenRule(input.token,APP_KEY,APP_SECRET,limitAuthority);
     }
 
     /**
@@ -71,32 +71,37 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
     }
 
     public HowayResult doExcute(I input,O output){
-        Processor annotation = this.getClass().getAnnotation(Processor.class);
-        logger.info("begin --> input: "+ JSON.toJSONString(input));
-        StatusCode sc = dataCheck(input);
-        if( sc.getCode() != StatusCode.SUCCESS.getCode() ){
-            return HowayResult.createFailResult(sc,"数据检查失败",output);
-        }
-        if(annotation.certification()){
-            sc = certification(input);
+        try{
+            Processor annotation = this.getClass().getAnnotation(Processor.class);
+            logger.info("begin --> input: "+ JSON.toJSONString(input));
+            StatusCode sc = dataCheck(input);
             if( sc.getCode() != StatusCode.SUCCESS.getCode() ){
-                return HowayResult.createFailResult(sc,"安全认证失败",output);
+                return HowayResult.createFailResult(sc,"数据检查失败",output);
             }
-        }
-        HowayResult response = beforeProcess(input,output);
-        if(!response.isOk()){
+            if(annotation.certification()){
+                sc = certification(input,annotation.limitAuthority());
+                if( sc.getCode() != StatusCode.SUCCESS.getCode() ){
+                    return HowayResult.createFailResult(sc,"安全认证失败",output);
+                }
+            }
+            HowayResult response = beforeProcess(input,output);
+            if(!response.isOk()){
+                return response;
+            }
+            response = process(input,output);
+            if(!response.isOk()){
+                return response;
+            }
+            response = afterPrcocess(input,output);
+            if(!response.isOk()){
+                return response;
+            }
+            logger.info("end --> response: "+ JSON.toJSONString(response));
             return response;
+        }catch (Exception e){
+            logger.error(Arrays.toString(e.getStackTrace()));
+            return HowayResult.createFailResult(StatusCode.JAVAEXCEPTION,output);
         }
-        response = process(input,output);
-        if(!response.isOk()){
-            return response;
-        }
-        response = afterPrcocess(input,output);
-        if(!response.isOk()){
-            return response;
-        }
-        logger.info("end --> response: "+ JSON.toJSONString(response));
-        return response;
     }
 
 
