@@ -15,9 +15,9 @@ class HowayAccessTokenTest {
     void getToken() throws ParseException, InterruptedException {
 
         for (int i = 0; i < 20; i++){
-            String token = accessToken.getToken(57,"张三","123456","asdf","mnkl89");
+            String token = accessToken.getToken(57,"张三","123456","5582","d1497b84");
             //System.out.println(token);
-            System.out.println(accessToken.isToekenRule(token,"张三","123456","asdf","mnkl89"));
+            System.out.println(accessToken.isToekenRule(token,"张三","123456"));
 
         }
         //System.out.println(accessToken.isToekenRule("e0b6a851a0a8a4cf2b3cae164112189d9512","张三","123456","asdf","mnkl89"));

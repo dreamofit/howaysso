@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -18,7 +19,7 @@ import javax.servlet.http.HttpSession;
 public class UserController {
 
     @CrossOrigin
-    @RequestMapping(value = "/login", method = { RequestMethod.GET })
+    @RequestMapping(value = "/login", method = { RequestMethod.POST })
     public String login(@RequestBody JSONObject user, HttpSession session, HttpServletRequest request, HttpServletResponse response){
         UserLoginProcessor loginProcessor = new UserLoginProcessor();
         UserLoginInput input = new UserLoginInput();
@@ -34,6 +35,12 @@ public class UserController {
         input.inChomm.tel = user.getString("tel");
         UserLoginOutput output = new UserLoginOutput();
         HowayResult rs = loginProcessor.doExcute(input,output);
+        output = (UserLoginOutput) rs.getData();
+        session.setAttribute("howay_token", output.token);
+        Cookie tokenCookie = new Cookie("howay_token", output.token);
+        tokenCookie.setPath("/");
+        tokenCookie.setMaxAge(-1);
+        response.addCookie(tokenCookie);
         return rs.toString();
     }
 
@@ -44,6 +51,8 @@ public class UserController {
         input.inChomm.name = user.getString("name");
         input.inChomm.password = user.getString("password");
         input.inChomm.tel = user.getString("tel");
+        input.inChomm.email = user.getString("email");
+        input.inChomm.site = user.getString("site");
         UserRegisterProcessor registerProcessor = new UserRegisterProcessor();
         UserRegisterOutput output = new UserRegisterOutput();
         return registerProcessor.doExcute(input,output).toString();

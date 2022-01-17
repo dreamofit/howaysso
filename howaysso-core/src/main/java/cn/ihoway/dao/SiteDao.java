@@ -17,6 +17,8 @@ public interface SiteDao {
 
     Site selectByName(String name);
 
+    Site selectByAppKey(String appKey);
+
     Site selectByUrl(String url);
 
     List<Site> selectAll();

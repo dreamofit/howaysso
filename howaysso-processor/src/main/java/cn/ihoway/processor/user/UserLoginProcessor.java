@@ -25,8 +25,6 @@ public class UserLoginProcessor extends CommonProcessor<UserLoginInput, UserLogi
     private final UserService service = new UserServiceImpl();
     private final HowayLog logger = new HowayLog(UserLoginProcessor.class);
     private final HowayAccessToken accessToken = new HowayAccessToken();
-    private static final String APP_KEY = "x5bnp";
-    private static final String APP_SECRET = "mkop9p";
 
     @Override
     protected StatusCode dataCheck(UserLoginInput input){

@@ -25,8 +25,6 @@ public class UserUpdateRoleProcessor extends CommonProcessor<UserUpdateInput, Us
     private final HowayLog logger = new HowayLog(UserUpdateProcessor.class);
     private final HowayAccessToken accessToken = new HowayAccessToken();
     private final UserService service = new UserServiceImpl();
-    private static final String APP_KEY = "x5bnp";
-    private static final String APP_SECRET = "mkop9p";
 
     @Override
     protected StatusCode dataCheck(UserUpdateInput input){

@@ -26,6 +26,12 @@
     from site
     where name = #{name,jdbcType=VARCHAR}
   </select>
+  <select id="selectByAppKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from site
+    where appkey = #{appKey,jdbcType=VARCHAR}
+  </select>
   <select id="selectByUrl" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />

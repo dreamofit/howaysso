@@ -36,6 +36,11 @@ public class SiteServiceImpl implements SiteService {
     }
 
     @Override
+    public Site findSiteByAppKey(String appKey) {
+        return siteDao.selectByAppKey(appKey);
+    }
+
+    @Override
     public List<Site> findAll() {
         return siteDao.selectAll();
     }

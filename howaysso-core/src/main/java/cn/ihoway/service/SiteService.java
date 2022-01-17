@@ -9,6 +9,7 @@ public interface SiteService {
     Site findSiteById(Integer id);
     Site findSiteByName(String name);
     Site findSiteByUrl(String url);
+    Site findSiteByAppKey(String appKey);
     List<Site> findAll();
     int update(Site site);
     int delete(Integer id);

@@ -1,7 +1,10 @@
 package cn.ihoway.security;
 
+import cn.ihoway.entity.Site;
 import cn.ihoway.entity.User;
+import cn.ihoway.impl.SiteServiceImpl;
 import cn.ihoway.impl.UserServiceImpl;
+import cn.ihoway.service.SiteService;
 import cn.ihoway.service.UserService;
 import cn.ihoway.type.AlgorithmType;
 import cn.ihoway.type.AuthorityLevel;
@@ -20,18 +23,18 @@ import java.util.Random;
 public class HowayAccessToken {
 
     private final HowayLog logger = new HowayLog(HowayAccessToken.class);
-    private final UserService service = new UserServiceImpl();
+    private final UserService userService = new UserServiceImpl();
+    private final SiteService siteService = new SiteServiceImpl();
 
-    public static final int HEAD_PLACEHOLDER = 4; //随机数占用位数
+    public static final int HEAD_PLACEHOLDER = 3; //随机数占用位数
     public static final int ID_PLACEHOLDER = 4; //用户id占用位数
     private static final int ALGORITHM_PLACEHOLDER = 2; //算法位占用位数(固定)
-    private static final int NAME_PASSWORD_PLACEHOLDER = 8; //用户名密码占用位数
-    private static final int APP_KEY_PLACEHOLDER = 4;
+    private static final int NAME_PASSWORD_PLACEHOLDER = 6; //用户名密码占用位数
+    private static final int APP_KEY_PLACEHOLDER = 4; //app_key
     private static final int APP_KEY_APP_SECRET_PLACEHOLDER = 6; //key和secert占用位数
     private static final int TIMESTAMP_PLACEHOLDER = 9; //时间戳占用位数（固定）
     private static final int SIGN_PLACEHOLDER = 4; // 签名占用位数
     private static final int EXPIRATION_TIME = 15; // 过期时间 (min)
-    private static final boolean APP_KEY_ENABle = false;
 
     /**
      * 按规则生成token
@@ -57,9 +60,7 @@ public class HowayAccessToken {
         //用随机算法加密用户名和密码
         token += HowayEncrypt.encrypt(name+password,AlgorithmType.values()[secondRandom].getAlgorithm(),NAME_PASSWORD_PLACEHOLDER);
         //app_key
-        if(APP_KEY_ENABle){
-            token += appKey.substring(0,APP_KEY_PLACEHOLDER);
-        }
+        token += appKey.substring(0,APP_KEY_PLACEHOLDER);
         //两位随机算法
         token += HowayEncrypt.encrypt(String.valueOf(thirdRandom),AlgorithmType.MD5.getAlgorithm(),ALGORITHM_PLACEHOLDER);
         //用随机算法加密appkey和appsecret
@@ -77,20 +78,16 @@ public class HowayAccessToken {
      * @param token token
      * @param name 用户名
      * @param password 密码
-     * @param appKey appKey
-     * @param appSecret appSecret
      * @return true or false
      */
-    protected StatusCode isToekenRule(String token,String name,String password,String appKey,String appSecret){
+    protected StatusCode isToekenRule(String token,String name,String password){
         logger.info("token:"+token);
-        int len = HEAD_PLACEHOLDER + ID_PLACEHOLDER + ALGORITHM_PLACEHOLDER*2 + NAME_PASSWORD_PLACEHOLDER + APP_KEY_APP_SECRET_PLACEHOLDER + TIMESTAMP_PLACEHOLDER+SIGN_PLACEHOLDER;
-        if(APP_KEY_ENABle){
-            len += APP_KEY_PLACEHOLDER;
-        }
+        int len = HEAD_PLACEHOLDER + ID_PLACEHOLDER + ALGORITHM_PLACEHOLDER*2 + NAME_PASSWORD_PLACEHOLDER + APP_KEY_PLACEHOLDER + APP_KEY_APP_SECRET_PLACEHOLDER + TIMESTAMP_PLACEHOLDER+SIGN_PLACEHOLDER;
         if(token.length() != len){
             logger.info("token长度异常！");
             return StatusCode.TOKENERROR;
         }
+        logger.info("len:"+len);
         //规则一：前面22经过md5加密后与后四位一致
         if(!token.substring(len-SIGN_PLACEHOLDER,len).equals(HowayEncrypt.encrypt(token.substring(0,len-SIGN_PLACEHOLDER),AlgorithmType.MD5.getAlgorithm(),SIGN_PLACEHOLDER))){
             logger.info("token签名异常！");
@@ -112,6 +109,21 @@ public class HowayAccessToken {
             return StatusCode.TOKENERROR;
         }
         //todo 规则三，获取app_key，查询数据库中是否存在该key,并获取想应的secret
+        end += APP_KEY_PLACEHOLDER;
+        Site site;
+        try {
+            site = getSiteByToken(token);
+        } catch (Exception e) {
+            logger.error(Arrays.toString(e.getStackTrace()));
+            return StatusCode.JAVAEXCEPTION;
+        }
+        if(site == null){
+            logger.info("token appkey失效或者错误！");
+            return StatusCode.TOKENERROR;
+        }
+        String appKey = site.getAppkey();
+        String appSecret = site.getAppsecret();
+        logger.info("appkey:"+appKey+" appsecret:"+appSecret);
 
         //规则四，获取14-15位的第二个随机算法，用该随机算法计算appkey+appSecret与第16-21位字符串一致
         start = end;
@@ -138,7 +150,14 @@ public class HowayAccessToken {
         return StatusCode.SUCCESS;
     }
 
-    public StatusCode isToekenRule(String token, String appKey, String appSecret, AuthorityLevel limitAuthority) {
+    private Site getSiteByToken(String token) throws Exception{
+        int start = HEAD_PLACEHOLDER + ID_PLACEHOLDER + ALGORITHM_PLACEHOLDER + NAME_PASSWORD_PLACEHOLDER;
+        int end = start + APP_KEY_PLACEHOLDER;
+        String appKey = token.substring(start,end);
+        return siteService.findSiteByAppKey(appKey);
+    }
+
+    public StatusCode isToekenRule(String token, AuthorityLevel limitAuthority) {
         User user;
         try {
             user = getUserByToken(token);
@@ -152,15 +171,16 @@ public class HowayAccessToken {
         }
         if(user.getRole() < limitAuthority.getLevel()){
             logger.info("用户"+user.getName()+"权限不足");
+            logger.info(user.getName()+"等级:"+user.getRole()+" 最低权限要求:"+limitAuthority.getLevel());
             return StatusCode.PERMISSIONDENIED;
         }
-        return isToekenRule(token,user.getName(),user.getPassword(),appKey,appSecret);
+        return isToekenRule(token,user.getName(),user.getPassword());
     }
 
     public User getUserByToken(String token) throws Exception{
         String uidStr = moveLeftLetter(token.substring(HEAD_PLACEHOLDER,HEAD_PLACEHOLDER + ID_PLACEHOLDER));
         int uid = Integer.parseInt(uidStr);
-        return service.findById(uid);
+        return userService.findById(uid);
     }
 
     private String leftLetter(String str){

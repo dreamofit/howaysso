@@ -22,8 +22,8 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
 
     private final HowayLog logger = new HowayLog(CommonProcessor.class);
     private final HowayAccessToken accessToken = new HowayAccessToken();
-    private static final String APP_KEY = "x5bnp";
-    private static final String APP_SECRET = "mkop9p";
+    protected static final String APP_KEY = "5582";
+    protected static final String APP_SECRET = "d1497b84";
     /**
      * 数据检查
      * @param input input
@@ -39,7 +39,7 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
      * @return StatusCode
      */
     protected StatusCode certification(I input, AuthorityLevel limitAuthority) {
-        return accessToken.isToekenRule(input.token,APP_KEY,APP_SECRET,limitAuthority);
+        return accessToken.isToekenRule(input.token,limitAuthority);
     }
 
     /**
