@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/", method = { RequestMethod.POST })
+    @RequestMapping(value = "", method = { RequestMethod.POST })
     public String add(@RequestBody JSONObject user){
         UserRegisterInput input = new UserRegisterInput();
         input.inChomm.name = user.getString("name");
@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/", method = { RequestMethod.PUT })
+    @RequestMapping(value = "", method = { RequestMethod.PUT })
     public String update(String token,@RequestBody JSONObject user){
         UserUpdateProcessor updateProcessor = new UserUpdateProcessor();
         UserUpdateInput input = new UserUpdateInput();
@@ -90,7 +90,7 @@ public class UserController {
 
 
     @CrossOrigin
-    @RequestMapping(value = "/", method = { RequestMethod.GET })
+    @RequestMapping(value = "", method = { RequestMethod.GET })
     public String selectAllUser(String token){
         UserSearchProcessor searchProcessor = new UserSearchProcessor();
         UserSearchInput input = new UserSearchInput();

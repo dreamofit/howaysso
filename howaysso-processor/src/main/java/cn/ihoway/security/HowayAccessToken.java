@@ -108,7 +108,7 @@ public class HowayAccessToken {
             logger.info("token用户和密码加密异常");
             return StatusCode.TOKENERROR;
         }
-        //todo 规则三，获取app_key，查询数据库中是否存在该key,并获取想应的secret
+        //规则三，获取app_key，查询数据库中是否存在该key,并获取想应的secret
         end += APP_KEY_PLACEHOLDER;
         Site site;
         try {
