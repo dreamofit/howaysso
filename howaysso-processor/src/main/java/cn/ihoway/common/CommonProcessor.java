@@ -47,7 +47,7 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
      * @return StatusCode
      */
     protected StatusCode certification(I input, AuthorityLevel limitAuthority) {
-        return accessToken.isToekenRule(input.token,limitAuthority);
+        return accessToken.isToekenRule(input.token,limitAuthority.getLevel());
     }
 
     /**

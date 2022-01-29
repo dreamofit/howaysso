@@ -73,6 +73,16 @@ public class HowayAccessToken {
         return token;
     }
 
+    public String getTokenByToken(String token,String appKey,String appSecret){
+        try {
+            User user = getUserByToken(token);
+            return getToken(user.getId(),user.getName(),user.getPassword(),appKey,appSecret);
+        } catch (Exception e) {
+            logger.error(Arrays.toString(e.getStackTrace()));
+            return "";
+        }
+    }
+
     /**
      * 检查token是否符合生成规则，检查是否过期
      * @param token token
@@ -157,7 +167,7 @@ public class HowayAccessToken {
         return siteService.findSiteByAppKey(appKey);
     }
 
-    public StatusCode isToekenRule(String token, AuthorityLevel limitAuthority) {
+    public StatusCode isToekenRule(String token, int level) {
         User user;
         try {
             user = getUserByToken(token);
@@ -169,9 +179,9 @@ public class HowayAccessToken {
             logger.info("用户不存在");
             return StatusCode.TOKENERROR;
         }
-        if(user.getRole() < limitAuthority.getLevel()){
+        if(user.getRole() < level){
             logger.info("用户"+user.getName()+"权限不足");
-            logger.info(user.getName()+"等级:"+user.getRole()+" 最低权限要求:"+limitAuthority.getLevel());
+            logger.info(user.getName()+"等级:"+user.getRole()+" 最低权限要求:"+level);
             return StatusCode.PERMISSIONDENIED;
         }
         return isToekenRule(token,user.getName(),user.getPassword());
