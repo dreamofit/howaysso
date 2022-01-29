@@ -2,16 +2,24 @@ package cn.ihoway.common;
 
 
 import cn.ihoway.annotation.Processor;
+import cn.ihoway.api.record.RecordAsm;
 import cn.ihoway.common.io.CommonInput;
 import cn.ihoway.common.io.CommonOutput;
+import cn.ihoway.container.HowayContainer;
 import cn.ihoway.security.HowayAccessToken;
 import cn.ihoway.type.AuthorityLevel;
 import cn.ihoway.type.StatusCode;
 import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang.StringUtils;
 
+
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * 程序处理器公共类，所有逻辑处理器必须继承该类
@@ -71,6 +79,21 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
     }
 
     public HowayResult doExcute(I input,O output){
+        if(StringUtils.isBlank(input.eventNo)){
+            logger.info("事件编号不能为空!");
+            return HowayResult.createFailResult(StatusCode.FIELDMISSING,"事件编号不能为空!",output);
+        }
+        HowayResult response = inserRecord(input,output); //记录input日志
+        if(response.getStatusCode() == StatusCode.DUPLICATREQUEST){
+            return response;
+        }
+        response = getResponse(input,output);
+        updateRecord(input,response); //记录output日志
+        logger.info("end --> response: "+ JSON.toJSONString(response));
+        return response;
+    }
+
+    private HowayResult getResponse(I input,O output){
         try{
             Processor annotation = this.getClass().getAnnotation(Processor.class);
             logger.info("begin --> input: "+ JSON.toJSONString(input));
@@ -104,5 +127,62 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
         }
     }
 
+    /**
+     * 写日志 ———— input情况
+     * @param input
+     * @param output
+     * @return
+     */
+    private HowayResult inserRecord(I input,O output){
+        try{
+            RecordAsm recordAsm = (RecordAsm) HowayContainer.getContext().getBean("RecordAsm");
+            HashMap<String,Object> res = recordAsm.findByEventNo(input.eventNo);
+            if(res != null){
+                logger.info("请求重复！eventNo:" + input.eventNo);
+                String resOutput = (String) res.get("output");
+                return HowayResult.createFailResult(StatusCode.DUPLICATREQUEST,"请求重复!",StringUtils.isBlank(resOutput)?output:JSON.parse(resOutput));
+            }
+            HashMap<String,String> addInput = new HashMap<>();
+            addInput.put("eventNo",input.eventNo);
+            addInput.put("input",JSON.toJSONString(input));
+            addInput.put("inputToken",input.token);
+            long timeStamp = System.currentTimeMillis();
+            Date date = new Date(timeStamp);
+            addInput.put("inputTime",getCurrentTime(date));
+            addInput.put("inputTimestamp",String.valueOf(timeStamp));
+            addInput.put("sysName","howaysso");
+            addInput.put("ip",input.ip);
+            addInput.put("method",input.method);
+            recordAsm.addRecor(addInput);
+        }catch (Exception e){
+            logger.error("[warning] input日志写入失败，cause by :" + e.getCause());
+            logger.error(Arrays.toString(e.getStackTrace()));
+        }
+        return HowayResult.createSuccessResult(output);
+    }
+
+    private void updateRecord(I input,HowayResult response){
+        try {
+            RecordAsm recordAsm = (RecordAsm) HowayContainer.getContext().getBean("RecordAsm");
+            HashMap<String,String> updateInput = new HashMap<>();
+            updateInput.put("eventNo",input.eventNo);
+            updateInput.put("output",JSON.toJSONString(response));
+            long timeStamp = System.currentTimeMillis();
+            Date date = new Date(timeStamp);
+            updateInput.put("outputTime",getCurrentTime(date));
+            updateInput.put("outputTimestamp",String.valueOf(timeStamp));
+            updateInput.put("responseCode",String.valueOf(response.getStatusCode().getCode()));
+            recordAsm.updateRecord(updateInput);
+        }catch (Exception e){
+            logger.error("[warning] output日志写入失败，cause by :" + e.getCause());
+            logger.error(Arrays.toString(e.getStackTrace()));
+        }
+
+    }
+
+    private String getCurrentTime(Date date){
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(date);
+    }
 
 }

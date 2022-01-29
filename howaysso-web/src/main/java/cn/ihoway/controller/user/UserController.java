@@ -4,6 +4,8 @@ import cn.ihoway.processor.user.*;
 import cn.ihoway.processor.user.io.*;
 import cn.ihoway.type.LoginType;
 import cn.ihoway.type.UserSearchType;
+import cn.ihoway.util.HowayLog;
+import cn.ihoway.util.HowayRequest;
 import cn.ihoway.util.HowayResult;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -13,10 +15,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping(value = "/user")
 public class UserController {
+
+    private final HowayLog logger = new HowayLog(UserController.class);
 
     @CrossOrigin
     @RequestMapping(value = "/login", method = { RequestMethod.POST })
@@ -33,14 +38,20 @@ public class UserController {
         input.inChomm.name = user.getString("name");
         input.inChomm.password = user.getString("password");
         input.inChomm.tel = user.getString("tel");
+        input.eventNo = user.getString("eventNo");
+        input.ip = HowayRequest.getIpAddr(request);
         UserLoginOutput output = new UserLoginOutput();
         HowayResult rs = loginProcessor.doExcute(input,output);
-        output = (UserLoginOutput) rs.getData();
-        session.setAttribute("howay_token", output.token);
-        Cookie tokenCookie = new Cookie("howay_token", output.token);
-        tokenCookie.setPath("/");
-        tokenCookie.setMaxAge(-1);
-        response.addCookie(tokenCookie);
+        try {
+            output = (UserLoginOutput) rs.getData();
+            session.setAttribute("howay_token", output.token);
+            Cookie tokenCookie = new Cookie("howay_token", output.token);
+            tokenCookie.setPath("/");
+            tokenCookie.setMaxAge(-1);
+            response.addCookie(tokenCookie);
+        }catch (Exception e){
+            logger.error(Arrays.toString(e.getStackTrace()));
+        }
         return rs.toString();
     }
 

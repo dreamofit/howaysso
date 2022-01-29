@@ -1,5 +1,6 @@
 package cn.ihoway;
 
+import cn.ihoway.container.HowayContainer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
@@ -12,6 +13,8 @@ public class DubboServerInit {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("dubbo/provider.xml");
         //System.out.println(context.getDisplayName() + ": here");
         context.start();
+        HowayContainer container = new HowayContainer();
+        container.start();
         System.out.println("*** howaysso服务已经启动 ***");
         System.in.read();
     }

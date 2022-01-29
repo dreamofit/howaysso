@@ -11,7 +11,12 @@
       </configuration>
     </facet>
     <facet type="Spring" name="Spring">
-      <configuration />
+      <configuration>
+        <fileset id="fileset" name="Consumer" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/dubbo/consumer.xml</file>
+          <file>file://$MODULE_DIR$/src/main/resources/dubbo/provider.xml</file>
+        </fileset>
+      </configuration>
     </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_X">
@@ -86,5 +91,6 @@
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-devtools:2.5.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.5.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:2.5.5" level="project" />
+    <orderEntry type="library" name="Maven: cn.ihoway:HowayRecord-api:1.0.0" level="project" />
   </component>
 </module>

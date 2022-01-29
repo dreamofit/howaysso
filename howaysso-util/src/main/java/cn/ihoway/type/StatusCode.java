@@ -22,7 +22,8 @@ public enum StatusCode {
     LOGINTYPENOTSURPPORT(3008,"登录方式暂不支持"),
     SEARCHTYPENOTSUPPORT(3009,"查询方式暂不支持"),
     JAVAEXCEPTION(4001,"java异常，请联系管理员处理"),
-    ILLEGALOPERATION(5001,"非法操作");
+    ILLEGALOPERATION(5001,"非法操作"),
+    DUPLICATREQUEST(6001,"重复请求");
 
     private int code;
     private String msg;

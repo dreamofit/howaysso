@@ -9,4 +9,7 @@ import cn.ihoway.common.CommonSeria;
  */
 public class CommonInput extends CommonSeria {
     public String token;
+    public String eventNo;
+    public String ip;
+    public String method;
 }
