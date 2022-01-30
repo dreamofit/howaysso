@@ -31,8 +31,11 @@ public class TokenAsmIml implements TokenAsm {
     public HashMap<String, Object> getUserByToken(String token) {
         try {
             User user = accessToken.getUserByToken(token);
+            String password = user.getPassword();
             user.setPassword(null);
-            return JSON.parseObject(JSON.toJSONString(user), HashMap.class);
+            HashMap<String,Object> userMap = JSON.parseObject(JSON.toJSONString(user), HashMap.class);
+            user.setPassword(password);
+            return userMap;
         } catch (Exception e) {
             logger.error(Arrays.toString(e.getStackTrace()));
         }
