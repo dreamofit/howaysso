@@ -12,9 +12,12 @@
     <dubbo:registry address="zookeeper://localhost:2181"/>
     <!-- 用dubbo协议在20880端口暴露服务 -->
     <dubbo:protocol name="dubbo" port="20880" />
-    <!--使用 dubbo 协议实现定义好的 api.PermissionService 接口-->
+    <!--使用 dubbo 协议实现定义好的 api.user 接口-->
     <dubbo:service interface="cn.ihoway.api.user.UserAsm" ref="userAsm" protocol="dubbo" />
     <!--具体实现该接口的 bean-->
     <bean id="userAsm" class="cn.ihoway.user.UserAsmImpl"/>
+    <!-- api.token 接口 -->
+    <dubbo:service interface="cn.ihoway.api.security.TokenAsm" ref="tokenAsm" protocol="dubbo" />
+    <bean id="tokenAsm" class="cn.ihoway.security.TokenAsmIml"/>
 
 </beans>

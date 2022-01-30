@@ -25,6 +25,8 @@
     <orderEntry type="library" name="Maven: org.mybatis:mybatis:3.5.8" level="project" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:8.0.26" level="project" />
     <orderEntry type="module" module-name="howaysso-util" />
+    <orderEntry type="library" name="Maven: cn.ihoway:HowayRecord-api:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.12.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.13.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:2.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest:2.2" level="project" />
@@ -80,6 +82,5 @@
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-devtools:2.5.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.5.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:2.5.5" level="project" />
-    <orderEntry type="library" name="Maven: cn.ihoway:HowayRecord-api:1.0.0" level="project" />
   </component>
 </module>

@@ -125,11 +125,7 @@
             <version>${spring.version}</version>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>cn.ihoway</groupId>
-            <artifactId>HowayRecord-api</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+
     </dependencies>
     <build>
         <plugins>
