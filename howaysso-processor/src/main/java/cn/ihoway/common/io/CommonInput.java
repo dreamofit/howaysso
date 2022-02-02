@@ -12,4 +12,5 @@ public class CommonInput extends CommonSeria {
     public String eventNo;
     public String ip;
     public String method;
+    public String traceId;
 }

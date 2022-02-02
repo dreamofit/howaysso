@@ -9,17 +9,19 @@ import cn.ihoway.container.HowayContainer;
 import cn.ihoway.security.HowayAccessToken;
 import cn.ihoway.type.AuthorityLevel;
 import cn.ihoway.type.StatusCode;
+import cn.ihoway.util.HowayEncrypt;
 import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.MDC;
 
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * 程序处理器公共类，所有逻辑处理器必须继承该类
@@ -79,6 +81,10 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
     }
 
     public HowayResult doExcute(I input,O output){
+        if(StringUtils.isNotBlank(input.traceId)){
+            MDC.put("traceId",input.traceId);
+        }
+
         if(StringUtils.isBlank(input.eventNo)){
             logger.info("事件编号不能为空!");
             return HowayResult.createFailResult(StatusCode.FIELDMISSING,"事件编号不能为空!",output);
@@ -185,4 +191,11 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
         return dateFormat.format(date);
     }
 
+    /**
+     * 获取事件编号
+     * @return
+     */
+    private static String getEventNo(){
+        return HowayEncrypt.encrypt(UUID.randomUUID().toString(),"MD5",12);
+    }
 }

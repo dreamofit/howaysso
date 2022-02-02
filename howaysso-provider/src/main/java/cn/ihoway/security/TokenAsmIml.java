@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class TokenAsmIml implements TokenAsm {
-    private HowayAccessToken accessToken = new HowayAccessToken();
+    private final HowayAccessToken accessToken = new HowayAccessToken();
     private final HowayLog logger = new HowayLog(TokenAsmIml.class);
 
     @Override

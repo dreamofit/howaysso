@@ -102,11 +102,12 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping(value = "", method = { RequestMethod.GET })
-    public String selectAllUser(String token){
+    public String selectAllUser(String token,String eventNo){
         UserSearchProcessor searchProcessor = new UserSearchProcessor();
         UserSearchInput input = new UserSearchInput();
         input.inChomm.type = UserSearchType.ALL;
         input.token = token;
+        input.eventNo = eventNo;
         UserSearchOutput output = new UserSearchOutput();
         return searchProcessor.doExcute(input,output).toString();
     }

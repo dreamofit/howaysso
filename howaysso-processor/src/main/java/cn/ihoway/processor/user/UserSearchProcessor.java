@@ -24,7 +24,7 @@ public class UserSearchProcessor extends CommonProcessor<UserSearchInput, UserSe
 
     @Override
     protected StatusCode dataCheck(UserSearchInput input){
-        if(StringUtils.isEmpty(input.token) || input.inChomm.type == null){
+        if(input.inChomm.type == null){
             return StatusCode.FIELDMISSING;
         }
         if(input.inChomm.type == UserSearchType.ONLYID){
