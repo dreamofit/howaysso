@@ -2,13 +2,8 @@ package cn.ihoway.processor.site;
 
 import cn.ihoway.processor.site.io.SiteAddInput;
 import cn.ihoway.processor.site.io.SiteAddOutput;
-import cn.ihoway.util.HowayEncrypt;
 import cn.ihoway.util.HowayResult;
 import org.junit.jupiter.api.Test;
-
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class SiteAddProcessorTest {
     private final SiteAddProcessor processor = new SiteAddProcessor();
@@ -20,7 +15,7 @@ class SiteAddProcessorTest {
         input.inChomm.name = "sso";
         input.inChomm.url = "/sso";
         SiteAddOutput output = new SiteAddOutput();
-        HowayResult res = processor.doExcute(input,output);
+        HowayResult res = processor.doExecute(input,output);
         System.out.println(res.toString());
     }
 }

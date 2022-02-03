@@ -40,8 +40,9 @@ public class UserSearchProcessor extends CommonProcessor<UserSearchInput, UserSe
         List<User> userList = new ArrayList<>();
         if(input.inChomm.type == UserSearchType.ONLYID){
             User user = service.findById(input.inChomm.uid);
-            userList.add(user);
-
+            if(user != null){
+                userList.add(user);
+            }
         }else if(input.inChomm.type == UserSearchType.ALL){
             userList = service.findAll();
         }else{

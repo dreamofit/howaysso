@@ -26,7 +26,7 @@ public class SiteController {
         input.inChomm.url = site.getString("url");
         input.inChomm.rank = site.getInteger("rank");
         input.inChomm.enable = site.getInteger("enable");
-        HowayResult rs = processor.doExcute(input,output);
+        HowayResult rs = processor.doExecute(input,output);
         return rs.toString();
     }
 }

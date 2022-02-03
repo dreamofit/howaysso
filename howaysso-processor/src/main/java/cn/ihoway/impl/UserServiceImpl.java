@@ -16,7 +16,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public int addUser(User user) {
         int rs = userDao.insertSelective(user);
-        sqlSession.commit();
+        if(rs > 0){
+            sqlSession.commit();
+        }else {
+            sqlSession.rollback();
+        }
         return rs;
     }
 
@@ -53,7 +57,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public int updateUser(User user) {
         int rs = userDao.updateByPrimaryKeySelective(user);
-        sqlSession.commit();
+        if(rs > 0){
+            sqlSession.commit();
+        }else {
+            sqlSession.rollback();
+        }
         return rs;
     }
 }

@@ -16,7 +16,11 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public int addSite(Site site) {
         int rs = siteDao.insertSelective(site);
-        sqlSession.commit();
+        if(rs > 0){
+            sqlSession.commit();
+        }else {
+            sqlSession.rollback();
+        }
         return rs;
     }
 
@@ -48,7 +52,11 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public int update(Site site) {
         int rs = siteDao.updateByPrimaryKeySelective(site);
-        sqlSession.commit();
+        if(rs > 0){
+            sqlSession.commit();
+        }else {
+            sqlSession.rollback();
+        }
         return rs;
     }
 

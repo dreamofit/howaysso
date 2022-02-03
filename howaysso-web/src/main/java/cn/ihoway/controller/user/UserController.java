@@ -41,7 +41,7 @@ public class UserController {
         input.eventNo = user.getString("eventNo");
         input.ip = HowayRequest.getIpAddr(request);
         UserLoginOutput output = new UserLoginOutput();
-        HowayResult rs = loginProcessor.doExcute(input,output);
+        HowayResult rs = loginProcessor.doExecute(input,output);
         try {
             output = (UserLoginOutput) rs.getData();
             session.setAttribute("howay_token", output.token);
@@ -66,7 +66,7 @@ public class UserController {
         input.inChomm.site = user.getString("site");
         UserRegisterProcessor registerProcessor = new UserRegisterProcessor();
         UserRegisterOutput output = new UserRegisterOutput();
-        return registerProcessor.doExcute(input,output).toString();
+        return registerProcessor.doExecute(input,output).toString();
     }
 
     @CrossOrigin
@@ -82,7 +82,7 @@ public class UserController {
         // input.inChomm.name = user.getString("name"); 暂时不支持更改名字，更改名字需要更改密码
         input.inChomm.email = user.getString("email");
         input.inChomm.site = user.getString("site");
-        HowayResult rs = updateProcessor.doExcute(input,output);
+        HowayResult rs = updateProcessor.doExecute(input,output);
         return rs.toString();
     }
 
@@ -95,7 +95,7 @@ public class UserController {
         input.token = token;
         input.inChomm.uid = uid;
         input.inChomm.role = user.getInteger("role");
-        HowayResult rs = updateRoleProcessor.doExcute(input,output);
+        HowayResult rs = updateRoleProcessor.doExecute(input,output);
         return rs.toString();
     }
 
@@ -109,7 +109,7 @@ public class UserController {
         input.token = token;
         input.eventNo = eventNo;
         UserSearchOutput output = new UserSearchOutput();
-        return searchProcessor.doExcute(input,output).toString();
+        return searchProcessor.doExecute(input,output).toString();
     }
 
     @CrossOrigin
@@ -121,7 +121,7 @@ public class UserController {
         input.inChomm.uid = uid;
         input.token = token;
         UserSearchOutput output = new UserSearchOutput();
-        return searchProcessor.doExcute(input,output).toString();
+        return searchProcessor.doExecute(input,output).toString();
     }
 
 

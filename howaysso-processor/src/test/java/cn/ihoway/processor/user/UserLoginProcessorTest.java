@@ -19,7 +19,7 @@ class UserLoginProcessorTest {
         input.inChomm.name = "李四";
         input.inChomm.password = "123456";
         UserLoginOutput output = new UserLoginOutput();
-        HowayResult result = processor.doExcute(input,output);
+        HowayResult result = processor.doExecute(input,output);
         System.out.println(result.toString());
         assert result.isOk();
     }

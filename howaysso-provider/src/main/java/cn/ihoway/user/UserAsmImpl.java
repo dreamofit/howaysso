@@ -13,7 +13,6 @@ import cn.ihoway.util.Convert;
 import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
 import com.alibaba.fastjson.JSON;
-import org.slf4j.MDC;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +27,13 @@ public class UserAsmImpl implements UserAsm {
         UserLoginProcessor loginProcessor = new UserLoginProcessor();
         UserLoginInput input = (UserLoginInput) convert.hashMapToInput(inputHashMap,UserLoginInput.class.getName());
         UserLoginOutput output = new UserLoginOutput();
-        HowayResult result = loginProcessor.doExcute(input,output);
+        HowayResult result = loginProcessor.doExecute(input,output);
         return  JSON.parseObject(result.toString(),HashMap.class);
     }
 
     @Override
     public HashMap<String, Object> getUserById(Integer id,String eventNo,String traceId) {
+        logger.info(traceId+" : id: " + id + " eventNo: "+eventNo);
         UserNoTokenSearchProcessor processor = new UserNoTokenSearchProcessor();
         UserSearchInput input = new UserSearchInput();
         UserSearchOutput output = new UserSearchOutput();
@@ -41,8 +41,9 @@ public class UserAsmImpl implements UserAsm {
         input.inChomm.type = UserSearchType.ONLYID;
         input.eventNo = eventNo;
         input.traceId = traceId;
-        HowayResult result = processor.doExcute(input,output);
+        HowayResult result = processor.doExecute(input,output);
         output = (UserSearchOutput) result.getData();
+        logger.info("output tostring: "+JSON.toJSONString(output));
         List<User> userList = output.userList;
         if(userList != null && userList.size() > 0){
             User user = userList.get(0);

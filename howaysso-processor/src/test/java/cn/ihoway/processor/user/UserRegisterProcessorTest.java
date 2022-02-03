@@ -5,8 +5,6 @@ import cn.ihoway.processor.user.io.UserRegisterOutput;
 import cn.ihoway.util.HowayResult;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class UserRegisterProcessorTest {
     private UserRegisterProcessor processor = new UserRegisterProcessor();
 
@@ -17,7 +15,7 @@ class UserRegisterProcessorTest {
         input.inChomm.tel = "15215675779";
         input.inChomm.password = "123456";
         UserRegisterOutput output = new UserRegisterOutput();
-        HowayResult result = processor.doExcute(input,output);
+        HowayResult result = processor.doExecute(input,output);
         System.out.println(result.toString());
         assert result.isOk();
     }
