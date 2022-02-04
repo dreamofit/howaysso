@@ -33,6 +33,9 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-core:5.3.10" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-jcl:5.3.10" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:5.3.10" level="project" />
+    <orderEntry type="library" name="Maven: org.mybatis.caches:mybatis-redis:1.0.0-beta2" level="project" />
+    <orderEntry type="library" name="Maven: redis.clients:jedis:3.6.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.9.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.13.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:2.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest:2.2" level="project" />
@@ -60,6 +63,8 @@
     <orderEntry type="library" name="Maven: org.apache.curator:curator-recipes:2.8.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-web:2.5.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter:2.5.5" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.5.5" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:2.5.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-logging:2.5.5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-to-slf4j:2.14.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.14.1" level="project" />
@@ -79,8 +84,5 @@
     <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-websocket:9.0.53" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-web:5.3.10" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:5.3.10" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-devtools:2.5.5" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.5.5" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:2.5.5" level="project" />
   </component>
 </module>

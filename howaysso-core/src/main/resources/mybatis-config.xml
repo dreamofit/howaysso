@@ -8,6 +8,7 @@
     <settings>
         <!--标准日志配置-->
         <setting name="logImpl" value="LOG4J"/>
+        <setting name="cacheEnabled" value="true"/>
     </settings>
     <environments default="development">
         <environment id="development">

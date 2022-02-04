@@ -13,4 +13,5 @@ public interface UserService {
     User loginByNameAndPass(String name, String password);
     User loginByTelAndPass(String tel, String password);
     int updateUser(User user);
+    void free();
 }

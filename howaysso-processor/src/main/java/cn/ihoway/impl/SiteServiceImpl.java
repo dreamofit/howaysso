@@ -64,4 +64,9 @@ public class SiteServiceImpl implements SiteService {
     public int delete(Integer id) {
         return siteDao.deleteByPrimaryKey(id);
     }
+
+    @Override
+    public void free(){
+        sqlSession.close();
+    }
 }

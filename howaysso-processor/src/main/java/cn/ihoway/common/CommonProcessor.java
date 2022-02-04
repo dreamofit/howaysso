@@ -177,7 +177,7 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
             addInput.put("outputTime",getCurrentTime(date));
             addInput.put("outputTimestamp",String.valueOf(timeStamp));
             addInput.put("responseCode",String.valueOf(response.getStatusCode().getCode()));
-            recordAsm.addRecor(addInput);
+            recordAsm.addRecord(addInput);
         }catch (Exception e){
             logger.error("[warning] output日志写入失败，cause by :" + e.getCause());
             logger.error(Arrays.toString(e.getStackTrace()));

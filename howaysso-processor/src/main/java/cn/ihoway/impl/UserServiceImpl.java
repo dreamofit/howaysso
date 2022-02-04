@@ -64,4 +64,9 @@ public class UserServiceImpl implements UserService {
         }
         return rs;
     }
+
+    @Override
+    public void free(){
+        sqlSession.close();
+    }
 }

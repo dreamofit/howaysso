@@ -13,5 +13,5 @@ public interface SiteService {
     List<Site> findAll();
     int update(Site site);
     int delete(Integer id);
-
+    void free();
 }

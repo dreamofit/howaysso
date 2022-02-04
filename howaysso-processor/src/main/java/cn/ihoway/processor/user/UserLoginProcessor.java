@@ -78,6 +78,7 @@ public class UserLoginProcessor extends CommonProcessor<UserLoginInput, UserLogi
      */
     private HowayResult telIsExist(UserLoginInput input, UserLoginOutput output) {
         User user = service.findByTel(input.inChomm.tel);
+        service.free();
         return getUserExist(input, output, user);
     }
 
@@ -89,6 +90,7 @@ public class UserLoginProcessor extends CommonProcessor<UserLoginInput, UserLogi
      */
     private HowayResult userIsExist(UserLoginInput input, UserLoginOutput output) {
         User user = service.findByName(input.inChomm.name);
+        service.free();
         return getUserExist(input, output, user);
     }
 
