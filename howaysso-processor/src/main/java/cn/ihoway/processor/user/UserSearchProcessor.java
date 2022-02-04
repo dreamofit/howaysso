@@ -49,9 +49,11 @@ public class UserSearchProcessor extends CommonProcessor<UserSearchInput, UserSe
             return HowayResult.createFailResult(StatusCode.SEARCHTYPENOTSUPPORT, output);
         }
         for (User user:userList){
+            String password = user.getPassword();
             user.setPassword(null);
+            output.userList.add(user);
+            user.setPassword(password);
         }
-        output.userList = userList;
         service.free();
         return HowayResult.createSuccessResult(output);
     }
