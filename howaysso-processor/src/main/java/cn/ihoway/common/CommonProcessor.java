@@ -81,7 +81,7 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
     }
 
     public HowayResult doExecute(I input, O output){
-        if(org.apache.commons.lang3.StringUtils.isNotBlank(input.traceId)){
+        if(StringUtils.isNotBlank(input.traceId)){
             MDC.put("traceId",input.traceId);
         }
 
@@ -146,7 +146,7 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
             if(res != null){
                 logger.info("请求重复！eventNo:" + input.eventNo);
                 String resOutput = (String) res.get("output");
-                return HowayResult.createFailResult(StatusCode.DUPLICATREQUEST,"请求重复!", org.apache.commons.lang3.StringUtils.isBlank(resOutput)?output:JSON.parse(resOutput));
+                return HowayResult.createFailResult(StatusCode.DUPLICATREQUEST,"请求重复!", StringUtils.isBlank(resOutput)?output:JSON.parse(resOutput));
             }
             addInput.put("eventNo",input.eventNo);
             addInput.put("input",JSON.toJSONString(input));

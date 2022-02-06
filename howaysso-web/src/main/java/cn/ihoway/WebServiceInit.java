@@ -5,10 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class WebSeviceInit {
+public class WebServiceInit {
     public static void main( String[] args ) {
         HowayContainer container = new HowayContainer();
         container.start();
-        SpringApplication.run(WebSeviceInit.class, args);
+        SpringApplication.run(WebServiceInit.class, args);
     }
 }
