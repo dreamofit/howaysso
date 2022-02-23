@@ -23,21 +23,22 @@ public class UserController {
 
     private final HowayLog logger = new HowayLog(UserController.class);
 
+    /**
+     * 用户登录接口
+     */
     @CrossOrigin
     @RequestMapping(value = "/login", method = { RequestMethod.POST })
     public String login(@RequestBody JSONObject user, HttpSession session, HttpServletRequest request, HttpServletResponse response){
         UserLoginProcessor loginProcessor = new UserLoginProcessor();
         UserLoginInput input = new UserLoginInput();
-        if(StringUtils.isEmpty(user.getString("loginType"))){
-            input.inChomm.loginType = LoginType.NAMEANDPASS;
-        }else if(Integer.parseInt(user.getString("loginType")) > 3 || Integer.parseInt(user.getString("loginType"))<0) {
-            input.inChomm.loginType = LoginType.NAMEANDPASS;
-        }else{
-            input.inChomm.loginType = LoginType.values()[Integer.parseInt(user.getString("loginType"))];
-        }
         input.inChomm.name = user.getString("name");
-        input.inChomm.password = user.getString("password");
         input.inChomm.tel = user.getString("tel");
+        if(StringUtils.isNotBlank(input.inChomm.name)){
+            input.inChomm.loginType = LoginType.NAMEANDPASS;
+        }else if(StringUtils.isNotBlank(input.inChomm.tel)){
+            input.inChomm.loginType = LoginType.TELANDPASS;
+        }
+        input.inChomm.password = user.getString("password");
         input.eventNo = user.getString("eventNo");
         input.ip = HowayRequest.getIpAddr(request);
         UserLoginOutput output = new UserLoginOutput();
@@ -55,6 +56,9 @@ public class UserController {
         return rs.toString();
     }
 
+    /**
+     * 用户注册接口
+     */
     @CrossOrigin
     @RequestMapping(value = "", method = { RequestMethod.POST })
     public String add(@RequestBody JSONObject user){
@@ -114,12 +118,13 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping(value = "/{uid}", method = { RequestMethod.GET })
-    public String selectByUid(String token,@PathVariable("uid") Integer uid){
+    public String selectByUid(String token,String eventNo,@PathVariable("uid") Integer uid){
         UserSearchProcessor searchProcessor = new UserSearchProcessor();
         UserSearchInput input = new UserSearchInput();
         input.inChomm.type = UserSearchType.ONLYID;
         input.inChomm.uid = uid;
         input.token = token;
+        input.eventNo = eventNo;
         UserSearchOutput output = new UserSearchOutput();
         return searchProcessor.doExecute(input,output).toString();
     }

@@ -6,11 +6,13 @@ import cn.ihoway.entity.User;
 import cn.ihoway.impl.UserServiceImpl;
 import cn.ihoway.processor.user.io.UserSearchInput;
 import cn.ihoway.processor.user.io.UserSearchOutput;
+import cn.ihoway.security.HowayAccessToken;
 import cn.ihoway.service.UserService;
+import cn.ihoway.type.AuthorityLevel;
 import cn.ihoway.type.StatusCode;
 import cn.ihoway.type.UserSearchType;
+import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
-import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,16 @@ public class UserSearchProcessor extends CommonProcessor<UserSearchInput, UserSe
     }
 
     @Override
+    protected StatusCode certification(UserSearchInput input, AuthorityLevel limitAuthority) {
+        HowayAccessToken accessToken = new HowayAccessToken();
+        if(input.inChomm.type == UserSearchType.ALL){
+            //查询所有需要管理员权限
+            return accessToken.isToekenRule(input.token,AuthorityLevel.ADMINISTRATOR.getLevel());
+        }
+        return accessToken.isToekenRule(input.token,limitAuthority.getLevel());
+    }
+
+    @Override
     protected HowayResult process(UserSearchInput input, UserSearchOutput output) {
         List<User> userList = new ArrayList<>();
         if(input.inChomm.type == UserSearchType.ONLYID){
@@ -49,10 +61,13 @@ public class UserSearchProcessor extends CommonProcessor<UserSearchInput, UserSe
             return HowayResult.createFailResult(StatusCode.SEARCHTYPENOTSUPPORT, output);
         }
         for (User user:userList){
-            String password = user.getPassword();
-            user.setPassword(null);
-            output.userList.add(user);
-            user.setPassword(password);
+            try {
+                User temp = (User) user.clone();
+                temp.setPassword(null);
+                output.userList.add(temp);
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
         }
         service.free();
         return HowayResult.createSuccessResult(output);

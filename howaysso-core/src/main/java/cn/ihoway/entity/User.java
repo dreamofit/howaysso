@@ -8,7 +8,7 @@ import lombok.Data;
  * @author howay
  */
 @Data
-public class User implements Serializable {
+public class User implements Serializable, Cloneable {
     private Integer id;
 
     /**
@@ -54,4 +54,10 @@ public class User implements Serializable {
     private String backup;
 
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return (User) super.clone();
+    }
+
 }
