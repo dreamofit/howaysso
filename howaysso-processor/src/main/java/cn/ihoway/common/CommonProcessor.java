@@ -145,8 +145,7 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
             HashMap<String,Object> res = recordAsm.findByEventNo(input.eventNo);
             if(res != null){
                 logger.info("请求重复！eventNo:" + input.eventNo);
-                String resOutput = (String) res.get("output");
-                return HowayResult.createFailResult(StatusCode.DUPLICATREQUEST,"请求重复!", StringUtils.isBlank(resOutput)?output:JSON.parse(resOutput));
+                return HowayResult.createFailResult(StatusCode.DUPLICATREQUEST,"请求重复!", output);
             }
             addInput.put("eventNo",input.eventNo);
             addInput.put("input",JSON.toJSONString(input));

@@ -61,13 +61,15 @@ public class UserController {
      */
     @CrossOrigin
     @RequestMapping(value = "", method = { RequestMethod.POST })
-    public String add(@RequestBody JSONObject user){
+    public String add(@RequestBody JSONObject user,HttpServletRequest request){
         UserRegisterInput input = new UserRegisterInput();
         input.inChomm.name = user.getString("name");
         input.inChomm.password = user.getString("password");
         input.inChomm.tel = user.getString("tel");
         input.inChomm.email = user.getString("email");
         input.inChomm.site = user.getString("site");
+        input.eventNo = user.getString("eventNo");
+        input.ip = HowayRequest.getIpAddr(request);
         UserRegisterProcessor registerProcessor = new UserRegisterProcessor();
         UserRegisterOutput output = new UserRegisterOutput();
         return registerProcessor.doExecute(input,output).toString();
@@ -75,7 +77,7 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping(value = "", method = { RequestMethod.PUT })
-    public String update(String token,@RequestBody JSONObject user){
+    public String update(String token,@RequestBody JSONObject user,HttpServletRequest request){
         UserUpdateProcessor updateProcessor = new UserUpdateProcessor();
         UserUpdateInput input = new UserUpdateInput();
         UserUpdateOutput output = new UserUpdateOutput();
@@ -86,19 +88,23 @@ public class UserController {
         // input.inChomm.name = user.getString("name"); 暂时不支持更改名字，更改名字需要更改密码
         input.inChomm.email = user.getString("email");
         input.inChomm.site = user.getString("site");
+        input.eventNo = user.getString("eventNo");
+        input.ip = HowayRequest.getIpAddr(request);
         HowayResult rs = updateProcessor.doExecute(input,output);
         return rs.toString();
     }
 
     @CrossOrigin
     @RequestMapping(value = "/{uid}", method = { RequestMethod.PUT })
-    public String updateRole(String token,@PathVariable("uid") Integer uid,@RequestBody JSONObject user){
+    public String updateRole(String token,@PathVariable("uid") Integer uid,@RequestBody JSONObject user,HttpServletRequest request){
         UserUpdateRoleProcessor updateRoleProcessor = new UserUpdateRoleProcessor();
         UserUpdateInput input = new UserUpdateInput();
         UserUpdateOutput output = new UserUpdateOutput();
         input.token = token;
         input.inChomm.uid = uid;
         input.inChomm.role = user.getInteger("role");
+        input.eventNo = user.getString("eventNo");
+        input.ip = HowayRequest.getIpAddr(request);
         HowayResult rs = updateRoleProcessor.doExecute(input,output);
         return rs.toString();
     }
@@ -106,25 +112,27 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping(value = "", method = { RequestMethod.GET })
-    public String selectAllUser(String token,String eventNo){
+    public String selectAllUser(String token,String eventNo,HttpServletRequest request){
         UserSearchProcessor searchProcessor = new UserSearchProcessor();
         UserSearchInput input = new UserSearchInput();
         input.inChomm.type = UserSearchType.ALL;
         input.token = token;
         input.eventNo = eventNo;
+        input.ip = HowayRequest.getIpAddr(request);
         UserSearchOutput output = new UserSearchOutput();
         return searchProcessor.doExecute(input,output).toString();
     }
 
     @CrossOrigin
     @RequestMapping(value = "/{uid}", method = { RequestMethod.GET })
-    public String selectByUid(String token,String eventNo,@PathVariable("uid") Integer uid){
+    public String selectByUid(String token,String eventNo,@PathVariable("uid") Integer uid,HttpServletRequest request){
         UserSearchProcessor searchProcessor = new UserSearchProcessor();
         UserSearchInput input = new UserSearchInput();
         input.inChomm.type = UserSearchType.ONLYID;
         input.inChomm.uid = uid;
         input.token = token;
         input.eventNo = eventNo;
+        input.ip = HowayRequest.getIpAddr(request);
         UserSearchOutput output = new UserSearchOutput();
         return searchProcessor.doExecute(input,output).toString();
     }
