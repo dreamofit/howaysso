@@ -9,6 +9,7 @@ import cn.ihoway.service.UserService;
 import cn.ihoway.type.AlgorithmType;
 import cn.ihoway.type.AuthorityLevel;
 import cn.ihoway.type.StatusCode;
+import cn.ihoway.util.HowayConfigReader;
 import cn.ihoway.util.HowayEncrypt;
 import cn.ihoway.util.HowayLog;
 
@@ -26,15 +27,15 @@ public class HowayAccessToken {
     private final UserService userService = new UserServiceImpl();
     private final SiteService siteService = new SiteServiceImpl();
 
-    public static final int HEAD_PLACEHOLDER = 3; //随机数占用位数
-    public static final int ID_PLACEHOLDER = 4; //用户id占用位数
+    public static final int HEAD_PLACEHOLDER = HowayConfigReader.getIntConfig("token.properties","placeHolder.head"); //随机数占用位数
+    public static final int ID_PLACEHOLDER = HowayConfigReader.getIntConfig("token.properties","placeHolder.id");; //用户id占用位数
     private static final int ALGORITHM_PLACEHOLDER = 2; //算法位占用位数(固定)
-    private static final int NAME_PASSWORD_PLACEHOLDER = 6; //用户名密码占用位数
-    private static final int APP_KEY_PLACEHOLDER = 4; //app_key
-    private static final int APP_KEY_APP_SECRET_PLACEHOLDER = 6; //key和secert占用位数
+    private static final int NAME_PASSWORD_PLACEHOLDER = HowayConfigReader.getIntConfig("token.properties","placeHolder.password");; //用户名密码占用位数
+    private static final int APP_KEY_PLACEHOLDER = HowayConfigReader.getIntConfig("token.properties","placeHolder.key");; //app_key
+    private static final int APP_KEY_APP_SECRET_PLACEHOLDER = HowayConfigReader.getIntConfig("token.properties","placeHolder.secret");; //key和secret占用位数
     private static final int TIMESTAMP_PLACEHOLDER = 9; //时间戳占用位数（固定）
-    private static final int SIGN_PLACEHOLDER = 4; // 签名占用位数
-    private static final int EXPIRATION_TIME = 15; // 过期时间 (min)
+    private static final int SIGN_PLACEHOLDER = HowayConfigReader.getIntConfig("token.properties","placeHolder.sign");; // 签名占用位数
+    private static final int EXPIRATION_TIME = HowayConfigReader.getIntConfig("token.properties","time.expiration");; // 过期时间 (min)
 
     /**
      * 按规则生成token
@@ -69,6 +70,7 @@ public class HowayAccessToken {
         token += String.valueOf(System.currentTimeMillis()).substring(0,TIMESTAMP_PLACEHOLDER);
         //将上述全部进行md5加密
         token += HowayEncrypt.encrypt(token,AlgorithmType.MD5.getAlgorithm(), SIGN_PLACEHOLDER);
+
 
         return token;
     }
