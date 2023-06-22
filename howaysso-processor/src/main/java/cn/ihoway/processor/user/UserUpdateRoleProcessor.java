@@ -22,7 +22,7 @@ import java.util.Arrays;
 @Processor(name = "UserUpdateRoleProcessor",certification = true,limitAuthority = AuthorityLevel.ADMINISTRATOR)
 public class UserUpdateRoleProcessor extends CommonProcessor<UserUpdateInput, UserUpdateOutput> {
 
-    private final HowayLog logger = new HowayLog(UserUpdateProcessor.class);
+    private final HowayLog logger = new HowayLog(UserUpdateRoleProcessor.class);
     private final HowayAccessToken accessToken = new HowayAccessToken();
     private final UserService service = new UserServiceImpl();
 

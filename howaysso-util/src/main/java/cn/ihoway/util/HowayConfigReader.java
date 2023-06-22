@@ -19,7 +19,7 @@ public class HowayConfigReader {
     * 读取指定配置
     */
     public static String getConfig(String path,String key){
-        try(InputStream in = new ClassPathResource(path).getInputStream();) {
+        try(InputStream in = new ClassPathResource(path).getInputStream()) {
             prop = new Properties();
             prop.load(new InputStreamReader(in, StandardCharsets.UTF_8));   // 解决中文读取乱码问题
         } catch (Exception e) {

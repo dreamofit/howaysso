@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<access xmlns:howay="http://ihoway.cn/howay"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://ihoway.cn/howay
+            https://ihoway.cn/service/howay.xsd">
+
+    <!-- 用户登录 -->
+    <howay:service id="login" dir="user" prefix="UserLogin" processor="" input="" output=""/>
+    <!-- 用户注册 -->
+    <howay:service id="register" dir="user" prefix="UserRegister" processor="" input="" output=""/>
+    <!-- 更新用户 -->
+    <howay:service id="userUpdate" dir="user" prefix="UserUpdate" processor="" input="" output=""/>
+    <!-- 用户查询 -->
+    <howay:service id="userSearch" dir="user" prefix="UserSearch" processor="" input="" output=""/>
+    <!-- 管理员更新用户role -->
+    <howay:service id="userUpdateRole" dir="user" prefix="UserUpdateRole" processor="" input="cn.ihoway.processor.user.io.UserUpdateInput" output="cn.ihoway.processor.user.io.UserUpdateOutput"/>
+    <!-- 新增网站 -->
+    <howay:service id="siteAdd" dir="site" prefix="SiteAdd" processor="" input="" output=""/>
+</access>
