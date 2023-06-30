@@ -16,9 +16,8 @@
         <module>howaysso-core</module>
         <module>howaysso-util</module>
         <module>howaysso-processor</module>
-        <module>howaysso-provider</module>
         <module>howaysso-api</module>
-        <module>howaysso-web</module>
+        <module>howaysso-access</module>
     </modules>
 
     <properties>

@@ -7,7 +7,7 @@ import cn.ihoway.entity.User;
 import cn.ihoway.impl.UserServiceImpl;
 import cn.ihoway.processor.user.io.UserLoginInput;
 import cn.ihoway.processor.user.io.UserLoginOutput;
-import cn.ihoway.security.HowayAccessToken;
+import cn.ihoway.provider.security.HowayAccessToken;
 import cn.ihoway.service.UserService;
 import cn.ihoway.type.LoginType;
 import cn.ihoway.type.StatusCode;
@@ -111,6 +111,7 @@ public class UserLoginProcessor extends CommonProcessor<UserLoginInput, UserLogi
                 return HowayResult.createFailResult(StatusCode.PASSWORDERROR,output);
             }
         }
+        System.out.println("uid:"+user.getId() + " name:"+user.getName() + " pass:"+user.getPassword());
         output.token = accessToken.getToken(user.getId(),user.getName(),user.getPassword(),APP_KEY,APP_SECRET);
         return HowayResult.createSuccessResult(output);
     }

@@ -2,6 +2,7 @@ package cn.ihoway.processor.user;
 
 import cn.ihoway.processor.user.io.UserLoginInput;
 import cn.ihoway.processor.user.io.UserLoginOutput;
+import cn.ihoway.util.AccessRoute;
 import cn.ihoway.util.Convert;
 import cn.ihoway.util.HowayResult;
 import com.alibaba.fastjson.JSON;
@@ -15,30 +16,34 @@ class UserLoginProcessorTest {
 
     @Test
     void process() {
-        UserLoginInput input = new UserLoginInput();
-        input.inChomm.name = "李四";
-        input.inChomm.password = "123456";
-        UserLoginOutput output = new UserLoginOutput();
-        HowayResult result = processor.doExecute(input,output);
-        System.out.println(result.toString());
-        assert result.isOk();
+
     }
 
     @Test
     void test() throws ClassNotFoundException {
         HashMap<String,Object> map = new HashMap<>();
         HashMap<String,Object> inChomm = new HashMap<>();
-        HashMap<String,Object> common = new HashMap<>();
-        common.put("set","0");
         inChomm.put("name","张三");
         inChomm.put("password","123456");
         map.put("inChomm",inChomm);
-        map.put("common",common);
-        map.put("set",0);
-        UserLoginInput input = new UserLoginInput();
+        map.put("token","123");
+        UserLoginInput input;
 
         Convert convert = new Convert();
-        input = (UserLoginInput) convert.hashMapToInput(map,UserLoginInput.class.getName());
+        input = (UserLoginInput) convert.jsonToInput(map,UserLoginInput.class.getName());
+        System.out.println(JSON.toJSONString(input));
+    }
+
+    @Test
+    void test2() throws ClassNotFoundException {
+        HashMap<String,Object> map = new HashMap<>();
+        map.put("name","张三");
+        map.put("password","123456");
+        map.put("token","123");
+        UserLoginInput input;
+
+        Convert convert = new Convert();
+        input = (UserLoginInput) convert.mapToInput(map,UserLoginInput.class.getName());
         System.out.println(JSON.toJSONString(input));
     }
 

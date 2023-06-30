@@ -6,7 +6,7 @@ import cn.ihoway.entity.User;
 import cn.ihoway.impl.UserServiceImpl;
 import cn.ihoway.processor.user.io.UserUpdateInput;
 import cn.ihoway.processor.user.io.UserUpdateOutput;
-import cn.ihoway.security.HowayAccessToken;
+import cn.ihoway.provider.security.HowayAccessToken;
 import cn.ihoway.service.UserService;
 import cn.ihoway.type.StatusCode;
 import cn.ihoway.util.HowayEncrypt;
