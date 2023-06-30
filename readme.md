@@ -16,14 +16,17 @@
     前端使用react进行开发，以后端为准。
 
 ## 项目框架
-    howay-sso-core: 数据库核心层
-    howay-sso-processor： 处理器层，各服务核心处理逻辑
-    howay-sso-util: 工具库
+    howaysso-core: 数据库核心层
+    howaysso-processor： 处理器层，各服务核心处理逻辑
+    howaysso-util: 工具库
     howaysso-api: dubbo api
-    howaysso-provider: api服务提供
-    howaysso-web: restful api提供
+    howaysso-access:接入层，包括RPC和HTTP方式接入
 
-## Token生成规则
+## 项目启动
+    运行启动类ServiceInit就行，需要加入JVM参数：--add-opens java.base/java.lang=ALL-UNNAMED
+    同时需要启动zk和配置对应的数据库
+
+## Token生成规则 （待更新）
     1.username
     2.password
     3.appkey
@@ -85,7 +88,7 @@
     UNIQUE KEY `appkey_UNIQUE` (`appkey`)
     ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb3;
 
-## restful api说明
+## restful api说明 （待更新）
 ### 用户登录
     url:/user/login
     method:post

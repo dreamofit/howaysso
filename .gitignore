@@ -3,6 +3,5 @@ lib/
 howaysso-api/target
 howaysso-core/target
 howaysso-processor/target
-howaysso-provider/target
 howaysso-util/target
-howaysso-web/target
+howaysso-access/target
