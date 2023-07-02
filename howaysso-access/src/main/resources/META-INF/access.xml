@@ -5,15 +5,24 @@
             https://ihoway.cn/service/howay.xsd">
 
     <!-- 用户登录 -->
-    <howay:service id="login" dir="user" prefix="UserLogin" processor="" input="" output=""/>
+    <howay:service id="login" processor="cn.ihoway.processor.user.UserLoginProcessor"
+                   input="cn.ihoway.processor.user.io.UserLoginInput" output="cn.ihoway.processor.user.io.UserLoginOutput"/>
     <!-- 用户注册 -->
-    <howay:service id="register" dir="user" prefix="UserRegister" processor="" input="" output=""/>
+    <howay:service id="register" processor="cn.ihoway.processor.user.UserRegisterProcessor"
+                   input="cn.ihoway.processor.user.io.UserRegisterInput" output="cn.ihoway.processor.user.io.UserRegisterOutput"/>
     <!-- 更新用户 -->
-    <howay:service id="userUpdate" dir="user" prefix="UserUpdate" processor="" input="" output=""/>
+    <howay:service id="userUpdate" processor="cn.ihoway.processor.user.UserUpdateProcessor"
+                   input="cn.ihoway.processor.user.io.UserUpdateInput" output="cn.ihoway.processor.user.io.UserUpdateOutput"/>
     <!-- 用户查询 -->
-    <howay:service id="userSearch" dir="user" prefix="UserSearch" processor="" input="" output=""/>
+    <howay:service id="userSearch" processor="cn.ihoway.processor.user.UserSearchProcessor"
+                   input="cn.ihoway.processor.user.io.UserSearchInput" output="cn.ihoway.processor.user.io.UserSearchOutput"/>
+    <!-- 用户查询(RPC调用) -->
+    <howay:service id="userNoTokenSearch" processor="cn.ihoway.processor.user.UserNoTokenSearchProcessor"
+                   input="cn.ihoway.processor.user.io.UserSearchInput" output="cn.ihoway.processor.user.io.UserSearchOutput"/>
     <!-- 管理员更新用户role -->
-    <howay:service id="userUpdateRole" dir="user" prefix="UserUpdateRole" processor="" input="cn.ihoway.processor.user.io.UserUpdateInput" output="cn.ihoway.processor.user.io.UserUpdateOutput"/>
+    <howay:service id="userUpdateRole" processor="cn.ihoway.processor.user.UserUpdateRoleProcessor"
+                   input="cn.ihoway.processor.user.io.UserUpdateInput" output="cn.ihoway.processor.user.io.UserUpdateOutput"/>
     <!-- 新增网站 -->
-    <howay:service id="siteAdd" dir="site" prefix="SiteAdd" processor="" input="" output=""/>
+    <howay:service id="siteAdd" processor="cn.ihoway.processor.site.SiteAddProcessor"
+                   input="cn.ihoway.processor.site.io.SiteAddInput" output="cn.ihoway.processor.site.io.SiteAddOutput"/>
 </access>

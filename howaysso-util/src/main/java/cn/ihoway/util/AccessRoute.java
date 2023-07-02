@@ -27,23 +27,13 @@ public class AccessRoute {
     public static HowayResult handle(HttpServletRequest request,String serviceId, Map<String,Object> map){
         XmlParser parser = AccessXmlParser.parser;
         Element element = parser.getElement(serviceId);
-        String processor = String.valueOf(parser.getValueFromElement(element,"processor"));
-        String input = String.valueOf(parser.getValueFromElement(element,"input"));
-        String output = String.valueOf(parser.getValueFromElement(element,"output"));
-        String dir = String.valueOf(parser.getValueFromElement(element,"dir"));
-        String prefix = String.valueOf(parser.getValueFromElement(element,"prefix"));
-        String commonPrefix = HowayConfigReader.getConfig("access.properties","package.name") + dir;
-        String processorName = commonPrefix + "." + prefix + HowayConfigReader.getConfig("access.properties","processor.name");
-        String inputName = commonPrefix + ".io." + prefix + HowayConfigReader.getConfig("access.properties","input.name");
-        String outputName = commonPrefix + ".io." + prefix + HowayConfigReader.getConfig("access.properties","output.name");
-        if(StringUtils.isNotBlank(processor)){
-            processorName = processor;
-        }
-        if(StringUtils.isNotBlank(input)){
-            inputName = input;
-        }
-        if(StringUtils.isNotBlank(output)){
-            outputName = output;
+
+        String processorName = String.valueOf(parser.getValueFromElement(element,"processor"));
+        String inputName = String.valueOf(parser.getValueFromElement(element,"input"));
+        String outputName = String.valueOf(parser.getValueFromElement(element,"output"));
+
+        if(StringUtils.isBlank(processorName) || StringUtils.isBlank(inputName) || StringUtils.isBlank(outputName)){
+            return HowayResult.createFailResult(StatusCode.CONFIGERROR,null);
         }
         return handle(request,processorName,inputName,outputName,map);
     }
@@ -68,7 +58,18 @@ public class AccessRoute {
             Field[] fields = inputClz.getFields();
             for (Field field : fields){
                 if("ip".equals(field.getName())){
-                    field.set(input,HowayRequest.getIpAddr(request)); //input.ip赋值
+                    if(request == null){
+                        field.set(input,"127.0.0.1"); //input.ip赋值
+                    }else {
+                        field.set(input,HowayRequest.getIpAddr(request)); //input.ip赋值
+                    }
+                }
+                if("method".equals(field.getName())){
+                    if(request == null){
+                        field.set(input,"RPC"); //input.method赋值
+                    }else {
+                        field.set(input,request.getMethod()); //input.method赋值
+                    }
                 }
             }
             return execute(processorName,outputName,input);

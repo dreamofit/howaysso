@@ -5,3 +5,4 @@ howaysso-core/target
 howaysso-processor/target
 howaysso-util/target
 howaysso-access/target
+*.iml

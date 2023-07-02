@@ -9,6 +9,7 @@ import cn.ihoway.processor.user.io.UserLoginOutput;
 import cn.ihoway.processor.user.io.UserSearchInput;
 import cn.ihoway.processor.user.io.UserSearchOutput;
 import cn.ihoway.type.UserSearchType;
+import cn.ihoway.util.AccessRoute;
 import cn.ihoway.util.Convert;
 import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
@@ -24,24 +25,26 @@ public class UserAsmImpl implements UserAsm {
 
     @Override
     public HashMap<String, Object> login(HashMap<String, Object> inputHashMap) {
-        UserLoginProcessor loginProcessor = new UserLoginProcessor();
-        UserLoginInput input = (UserLoginInput) convert.jsonToInput(inputHashMap,UserLoginInput.class.getName());
-        UserLoginOutput output = new UserLoginOutput();
-        HowayResult result = loginProcessor.doExecute(input,output);
+//        UserLoginProcessor loginProcessor = new UserLoginProcessor();
+//        UserLoginInput input = (UserLoginInput) convert.jsonToInput(inputHashMap,UserLoginInput.class.getName());
+//        UserLoginOutput output = new UserLoginOutput();
+//        HowayResult result = loginProcessor.doExecute(input,output);
+        HowayResult result = AccessRoute.handle(null,"login",inputHashMap);
         return  JSON.parseObject(result.toString(),HashMap.class);
     }
 
     @Override
     public HashMap<String, Object> getUserById(Integer id,String eventNo,String traceId) {
         logger.info(traceId+" : id: " + id + " eventNo: "+eventNo);
-        UserNoTokenSearchProcessor processor = new UserNoTokenSearchProcessor();
-        UserSearchInput input = new UserSearchInput();
-        UserSearchOutput output = new UserSearchOutput();
-        input.inChomm.uid = id;
-        input.inChomm.type = UserSearchType.ONLYID;
-        input.eventNo = eventNo;
-        input.traceId = traceId;
-        HowayResult result = processor.doExecute(input,output);
+        UserSearchOutput output;
+
+        HashMap<String,Object> inputHashMap = new HashMap<>();
+        inputHashMap.put("uid",id);
+        inputHashMap.put("type",UserSearchType.ONLYID);
+        inputHashMap.put("eventNo",eventNo);
+        inputHashMap.put("traceId",traceId);
+        //HowayResult result = processor.doExecute(input,output);
+        HowayResult result = AccessRoute.handle(null,"userNoTokenSearch",inputHashMap);
         output = (UserSearchOutput) result.getData();
         logger.info("output : "+JSON.toJSONString(output));
         List<User> userList = output.userList;

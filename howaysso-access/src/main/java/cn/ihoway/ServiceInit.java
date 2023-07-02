@@ -1,5 +1,6 @@
 package cn.ihoway;
 
+import cn.ihoway.util.ConfigException;
 import cn.ihoway.util.HowayContainer;
 import cn.ihoway.util.AccessXmlParser;
 import cn.ihoway.util.HowayLog;
@@ -10,7 +11,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 @SpringBootApplication
 public class ServiceInit {
 
-    public static void main( String[] args ) {
+    public static void main( String[] args ) throws ConfigException {
         HowayLog logger = new HowayLog(ServiceInit.class);
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("dubbo/provider.xml");
         context.start();

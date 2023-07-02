@@ -2,11 +2,14 @@ package cn.ihoway.util;
 
 import org.dom4j.Attribute;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
 
 public class XmlParser {
@@ -19,7 +22,7 @@ public class XmlParser {
     /**
      * 初始化
      */
-    public void init(){
+    public void init() throws ConfigException {
         try {
             InputStream in = new ClassPathResource(pathName).getInputStream();
             //创建SAXReader对象
@@ -29,8 +32,24 @@ public class XmlParser {
             //获取根节点
             Element root = document.getRootElement();
             elements = root.elements();
-        } catch (Exception e) {
-            logger.error(e.getMessage());
+            checkPk();
+        } catch (DocumentException | IOException e) {
+            logger.error(e.getStackTrace());
+        } catch (ConfigException e) {
+            throw new ConfigException(e.getMessage());
+        }
+    }
+
+    //检查主键，必须唯一
+    private void checkPk() throws ConfigException {
+        HashSet<String> set = new HashSet<>();
+        for (Element element:elements){
+            Attribute attribute =  element.attribute(pk);
+            String value = attribute.getValue();
+            if(set.contains(value)){
+                throw new ConfigException(pathName + " [" + pk + " duplicate] : " + value + "!");
+            }
+            set.add(value);
         }
     }
 

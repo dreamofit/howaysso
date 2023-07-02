@@ -13,24 +13,6 @@
                     </xsd:annotation>
                 </xsd:attribute>
 
-                <xsd:attribute name="dir" type="xsd:string" use="optional">
-                    <xsd:annotation>
-                        <xsd:documentation><![CDATA[ 通用目录. ]]></xsd:documentation>
-                    </xsd:annotation>
-                </xsd:attribute>
-
-                <xsd:attribute name="prefix" type="xsd:string" use="optional">
-                    <xsd:annotation>
-                        <xsd:documentation><![CDATA[ 通用前缀或者processor前缀. ]]></xsd:documentation>
-                    </xsd:annotation>
-                </xsd:attribute>
-
-                <xsd:attribute name="ioPrefix" type="xsd:string" use="optional">
-                    <xsd:annotation>
-                        <xsd:documentation><![CDATA[ io前缀，不为空时优先使用这个. ]]></xsd:documentation>
-                    </xsd:annotation>
-                </xsd:attribute>
-
                 <xsd:attribute name="processor" type="xsd:string" use="optional">
                     <xsd:annotation>
                         <xsd:documentation><![CDATA[ 核心处理程序类地址，不为空时不考虑前缀. ]]></xsd:documentation>
