@@ -129,6 +129,7 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
             return response;
         }catch (Exception e){
             logger.error(Arrays.toString(e.getStackTrace()));
+            e.printStackTrace();
             return HowayResult.createFailResult(StatusCode.JAVAEXCEPTION,output);
         }
     }
