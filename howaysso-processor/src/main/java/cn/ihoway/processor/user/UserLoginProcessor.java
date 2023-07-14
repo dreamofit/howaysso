@@ -11,6 +11,7 @@ import cn.ihoway.provider.security.HowayAccessToken;
 import cn.ihoway.service.UserService;
 import cn.ihoway.type.LoginType;
 import cn.ihoway.type.StatusCode;
+import cn.ihoway.util.HowayContainer;
 import cn.ihoway.util.HowayEncrypt;
 import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
@@ -22,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
 @Processor(name = "UserLoginProcessor")
 public class UserLoginProcessor extends CommonProcessor<UserLoginInput, UserLoginOutput> {
 
-    private final UserService service = new UserServiceImpl();
+    private final UserService service = (UserServiceImpl) HowayContainer.getContext().getBean("userServiceImpl");
     private final HowayLog logger = new HowayLog(UserLoginProcessor.class);
     private final HowayAccessToken accessToken = new HowayAccessToken();
 
