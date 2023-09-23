@@ -31,7 +31,7 @@ import java.util.UUID;
 public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutput> {
 
     private final HowayLog logger = new HowayLog(CommonProcessor.class);
-    private final HowayAccessToken accessToken = new HowayAccessToken();
+    protected final HowayAccessToken accessToken = (HowayAccessToken) HowayContainer.getBean("token");
     protected static final String APP_KEY = "5582";
     protected static final String APP_SECRET = "d1497b84";
     /**
@@ -49,7 +49,7 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
      * @return StatusCode
      */
     protected StatusCode certification(I input, AuthorityLevel limitAuthority) {
-        return accessToken.isToekenRule(input.token,limitAuthority.getLevel());
+        return accessToken.isTokenRule(input.token,limitAuthority.getLevel());
     }
 
     /**
@@ -87,11 +87,11 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
 
         if(StringUtils.isBlank(input.eventNo)){
             logger.info("事件编号不能为空!");
-            return HowayResult.createFailResult(StatusCode.FIELDMISSING,"事件编号不能为空!",output);
+            return HowayResult.createFailResult(StatusCode.FIELD_MISSING,"事件编号不能为空!",output);
         }
         HashMap<String,String> addInput = new HashMap<>();
         HowayResult response = insertRecord(input,output,addInput); //记录input日志
-        if(response.getStatusCode() == StatusCode.DUPLICATREQUEST){
+        if(response.getStatusCode() == StatusCode.DUPLICATE_REQUEST){
             return response;
         }
         response = getResponse(input,output);
@@ -130,7 +130,7 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
         }catch (Exception e){
             logger.error(Arrays.toString(e.getStackTrace()));
             e.printStackTrace();
-            return HowayResult.createFailResult(StatusCode.JAVAEXCEPTION,output);
+            return HowayResult.createFailResult(StatusCode.JAVA_EXCEPTION,output);
         }
     }
 
@@ -142,11 +142,11 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
      */
     private HowayResult insertRecord(I input,O output,HashMap<String,String> addInput){
         try{
-            RecordAsm recordAsm = (RecordAsm) HowayContainer.getContext().getBean("RecordAsm");
+            RecordAsm recordAsm = (RecordAsm) HowayContainer.getDubbo("RecordAsm");
             HashMap<String,Object> res = recordAsm.findByEventNo(input.eventNo);
             if(res != null){
                 logger.info("请求重复！eventNo:" + input.eventNo);
-                return HowayResult.createFailResult(StatusCode.DUPLICATREQUEST,"请求重复!", output);
+                return HowayResult.createFailResult(StatusCode.DUPLICATE_REQUEST,"请求重复!", output);
             }
             addInput.put("eventNo",input.eventNo);
             addInput.put("input",JSON.toJSONString(input));
@@ -169,7 +169,7 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
 
     private void updateRecord(I input,HowayResult response,HashMap<String,String> addInput){
         try {
-            RecordAsm recordAsm = (RecordAsm) HowayContainer.getContext().getBean("RecordAsm");
+            RecordAsm recordAsm = (RecordAsm) HowayContainer.getDubbo("RecordAsm");
             addInput.put("eventNo",input.eventNo);
             addInput.put("output",JSON.toJSONString(response));
             long timeStamp = System.currentTimeMillis();

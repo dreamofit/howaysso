@@ -13,7 +13,7 @@ import java.util.Properties;
  */
 public class HowayLog {
     private static final Logger logger = Logger.getLogger(HowayLog.class);
-    private Class clazz = HowayLog.class;
+    private Class<?> clazz = HowayLog.class;
     public static void initLog() {
         InputStream inputStream = null;
         try {
@@ -36,23 +36,23 @@ public class HowayLog {
     public HowayLog(){
         HowayLog.initLog();
     }
-    public HowayLog(Class clazz){
+    public HowayLog(Class<?> clazz){
         this.clazz = clazz;
         HowayLog.initLog();
     }
-    public static void info(Class clazz,Object message){
+    public static void info(Class<?> clazz,Object message){
         HowayLog.initLog();
         logger.info("[" + clazz.getSimpleName()+"] " + message);
     }
-    public static void info(Object message,Class clazz){
+    public static void info(Object message,Class<?> clazz){
         HowayLog.initLog();
         logger.info("[" + clazz.getSimpleName()+"] "+ message);
     }
-    public static void error(Class clazz,Object message){
+    public static void error(Class<?> clazz,Object message){
         HowayLog.initLog();
         logger.error("[" + clazz.getSimpleName()+"] " + message);
     }
-    public static void error(Object message,Class clazz){
+    public static void error(Object message,Class<?> clazz){
         HowayLog.initLog();
         logger.error("[" + clazz.getSimpleName()+"] " + message);
     }

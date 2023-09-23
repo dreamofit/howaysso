@@ -4,5 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="userServiceImpl" class="cn.ihoway.impl.UserServiceImpl"/>
+    <bean id="siteServiceImpl" class="cn.ihoway.impl.SiteServiceImpl"/>
+    <bean id="token" class="cn.ihoway.provider.security.HowayAccessToken"/>
 
 </beans>

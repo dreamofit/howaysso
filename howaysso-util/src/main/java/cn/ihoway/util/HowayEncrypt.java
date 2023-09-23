@@ -9,6 +9,8 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * SHA-1 SHA-256 SHA-384 SHA-512 MD5 MD2
+ * 加密
+ * todo 对称加解密
  */
 public class HowayEncrypt {
     private static final HowayLog logger = new HowayLog(HowayEncrypt.class);

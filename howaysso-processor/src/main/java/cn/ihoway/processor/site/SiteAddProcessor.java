@@ -11,6 +11,7 @@ import cn.ihoway.type.AlgorithmType;
 import cn.ihoway.type.AuthorityLevel;
 import cn.ihoway.type.StatusCode;
 import cn.ihoway.util.Convert;
+import cn.ihoway.util.HowayContainer;
 import cn.ihoway.util.HowayEncrypt;
 import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
@@ -21,13 +22,13 @@ import java.util.UUID;
 @Processor(name = "SiteAddProcessor",certification = true,limitAuthority = AuthorityLevel.ADMINISTRATOR)
 public class SiteAddProcessor extends CommonProcessor<SiteAddInput, SiteAddOutput> {
 
-    private final SiteService siteService = new SiteServiceImpl();
+    private final SiteService siteService = (SiteServiceImpl) HowayContainer.getBean("siteServiceImpl");;
     private final HowayLog logger = new HowayLog(SiteAddProcessor.class);
 
     @Override
     protected StatusCode dataCheck(SiteAddInput input){
         if(StringUtils.isEmpty(input.inChomm.name) || StringUtils.isEmpty(input.inChomm.url)){
-            return StatusCode.FIELDMISSING;
+            return StatusCode.FIELD_MISSING;
         }
         return StatusCode.SUCCESS;
     }
@@ -38,7 +39,7 @@ public class SiteAddProcessor extends CommonProcessor<SiteAddInput, SiteAddOutpu
             input.inChomm.enable = 1;
         }
         if(input.inChomm.rank == null || input.inChomm.rank < 0){
-            input.inChomm.rank = AuthorityLevel.COMMONMEMBER.getLevel();
+            input.inChomm.rank = AuthorityLevel.COMMON_MEMBER.getLevel();
         }
         return HowayResult.createSuccessResult(output);
     }
@@ -52,7 +53,7 @@ public class SiteAddProcessor extends CommonProcessor<SiteAddInput, SiteAddOutpu
         site.setAppsecret(HowayEncrypt.encrypt(uuid.toString(), AlgorithmType.MD5.getAlgorithm(), 8));
         if(siteService.addSite(site) != 1){
             logger.info("插入失败");
-            return HowayResult.createFailResult(StatusCode.INSERTERROR,output);
+            return HowayResult.createFailResult(StatusCode.INSERT_ERROR,output);
         }
         logger.info("插入成功");
         return HowayResult.createSuccessResult(output);

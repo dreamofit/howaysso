@@ -12,22 +12,37 @@ import com.alibaba.fastjson.JSON;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * 提供给其他应用与用户相关（无token时）的服务
+ */
 public class UserAsmImpl implements UserAsm {
 
     private final HowayLog logger = new HowayLog(UserAsmImpl.class);
 
+    /**
+     * 登录服务
+     * @param inputHashMap 输入参数，参考UserLoginInput
+     * @return HashMap
+     */
     @Override
     public HashMap<String, Object> login(HashMap<String, Object> inputHashMap) {
         HowayResult result = AccessRoute.handle(null,"login",inputHashMap);
         return  JSON.parseObject(result.toString(),HashMap.class);
     }
 
+    /**
+     * 根据用户id获取用户信息
+     * @param id 用户id
+     * @param eventNo 事件编号
+     * @param traceId traceId
+     * @return HashMap
+     */
     @Override
     public HashMap<String, Object> getUserById(Integer id,String eventNo,String traceId) {
         logger.info(traceId+" : id: " + id + " eventNo: "+eventNo);
         HashMap<String,Object> inputHashMap = new HashMap<>();
         inputHashMap.put("uid",id);
-        inputHashMap.put("type",UserSearchType.ONLYID);
+        inputHashMap.put("type",UserSearchType.ONLY_ID);
         inputHashMap.put("eventNo",eventNo);
         inputHashMap.put("traceId",traceId);
         HowayResult result = AccessRoute.handle(null,"userNoTokenSearch",inputHashMap);

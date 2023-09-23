@@ -12,6 +12,9 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * 自定义xml解析器
+ */
 public class XmlParser {
 
     private static final HowayLog logger = new HowayLog(XmlParser.class);

@@ -6,9 +6,9 @@ import cn.ihoway.entity.User;
 import cn.ihoway.impl.UserServiceImpl;
 import cn.ihoway.processor.user.io.UserUpdateInput;
 import cn.ihoway.processor.user.io.UserUpdateOutput;
-import cn.ihoway.provider.security.HowayAccessToken;
 import cn.ihoway.service.UserService;
 import cn.ihoway.type.StatusCode;
+import cn.ihoway.util.HowayContainer;
 import cn.ihoway.util.HowayEncrypt;
 import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
@@ -22,13 +22,12 @@ import java.util.Arrays;
 @Processor(name = "UserUpdateProcessor",certification = true)
 public class UserUpdateProcessor extends CommonProcessor<UserUpdateInput, UserUpdateOutput> {
     private final HowayLog logger = new HowayLog(UserUpdateProcessor.class);
-    private final HowayAccessToken accessToken = new HowayAccessToken();
-    private final UserService service = new UserServiceImpl();
+    private final UserService service = (UserServiceImpl) HowayContainer.getBean("userServiceImpl");
 
     @Override
     protected StatusCode dataCheck(UserUpdateInput input){
         if(StringUtils.isEmpty(input.token)){
-            return StatusCode.FIELDMISSING;
+            return StatusCode.FIELD_MISSING;
         }
         return StatusCode.SUCCESS;
     }
@@ -40,13 +39,13 @@ public class UserUpdateProcessor extends CommonProcessor<UserUpdateInput, UserUp
             user = accessToken.getUserByToken(input.token);
         } catch (Exception e) {
             logger.error(Arrays.toString(e.getStackTrace()));
-            return HowayResult.createFailResult(StatusCode.JAVAEXCEPTION,output);
+            return HowayResult.createFailResult(StatusCode.JAVA_EXCEPTION,output);
         }
         //todo 更新名字也需要更新密码
         if(StringUtils.isNotEmpty(input.inChomm.name)){
             User temp = service.findByName(input.inChomm.name);
             if(temp != null){
-                return HowayResult.createFailResult(StatusCode.DUPLICATENAME,output);
+                return HowayResult.createFailResult(StatusCode.DUPLICATE_NAME,output);
             }
             user.setPassword(HowayEncrypt.md5(input.inChomm.name + user.getPassword()));
             user.setName(input.inChomm.name);
@@ -55,7 +54,7 @@ public class UserUpdateProcessor extends CommonProcessor<UserUpdateInput, UserUp
         if(StringUtils.isNotEmpty(input.inChomm.tel)){
             User temp = service.findByTel(input.inChomm.tel);
             if(temp != null){
-                return HowayResult.createFailResult(StatusCode.DUPLICATTEL,output);
+                return HowayResult.createFailResult(StatusCode.DUPLICATE_TEL,output);
             }
             user.setTel(input.inChomm.tel);
         }

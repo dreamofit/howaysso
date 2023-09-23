@@ -7,7 +7,6 @@ import cn.ihoway.entity.User;
 import cn.ihoway.impl.UserServiceImpl;
 import cn.ihoway.processor.user.io.UserLoginInput;
 import cn.ihoway.processor.user.io.UserLoginOutput;
-import cn.ihoway.provider.security.HowayAccessToken;
 import cn.ihoway.service.UserService;
 import cn.ihoway.type.LoginType;
 import cn.ihoway.type.StatusCode;
@@ -23,34 +22,33 @@ import org.apache.commons.lang.StringUtils;
 @Processor(name = "UserLoginProcessor")
 public class UserLoginProcessor extends CommonProcessor<UserLoginInput, UserLoginOutput> {
 
-    private final UserService service = (UserServiceImpl) HowayContainer.getContext().getBean("userServiceImpl");
+    private final UserService service = (UserServiceImpl) HowayContainer.getBean("userServiceImpl");
     private final HowayLog logger = new HowayLog(UserLoginProcessor.class);
-    private final HowayAccessToken accessToken = new HowayAccessToken();
 
     @Override
     protected StatusCode dataCheck(UserLoginInput input){
         if( input.inChomm.loginType == null ){
-            input.inChomm.loginType = LoginType.NAMEANDPASS;
+            input.inChomm.loginType = LoginType.NAME_AND_PASS;
         }
-        if( input.inChomm.loginType == LoginType.NAMEANDPASS ){
+        if( input.inChomm.loginType == LoginType.NAME_AND_PASS){
             if(StringUtils.isEmpty(input.inChomm.name) || StringUtils.isEmpty(input.inChomm.password) ){
                 logger.info("用户名和密码不能为空");
-                return StatusCode.FIELDMISSING;
+                return StatusCode.FIELD_MISSING;
             }
-        }else if( input.inChomm.loginType == LoginType.TELANDPASS ){
+        }else if( input.inChomm.loginType == LoginType.TEL_AND_PASS){
             if(StringUtils.isEmpty(input.inChomm.tel) || StringUtils.isEmpty(input.inChomm.password) ){
                 logger.info("电话号和密码不能为空");
-                return StatusCode.FIELDMISSING;
+                return StatusCode.FIELD_MISSING;
             }
-        }else if( input.inChomm.loginType == LoginType.TELONLY ){
+        }else if( input.inChomm.loginType == LoginType.TEL_ONLY){
             if(StringUtils.isEmpty(input.inChomm.tel) ){
                 logger.info("电话号不能为空");
-                return StatusCode.FIELDMISSING;
+                return StatusCode.FIELD_MISSING;
             }
-        }else if( input.inChomm.loginType == LoginType.NAMEANDEMAIL ){
+        }else if( input.inChomm.loginType == LoginType.NAME_AND_EMAIL){
             if(StringUtils.isEmpty(input.inChomm.name) || StringUtils.isEmpty(input.inChomm.email) ){
                 logger.info("用户名和邮箱不能为空");
-                return StatusCode.FIELDMISSING;
+                return StatusCode.FIELD_MISSING;
             }
         }
         return StatusCode.SUCCESS;
@@ -65,9 +63,9 @@ public class UserLoginProcessor extends CommonProcessor<UserLoginInput, UserLogi
     @Override
     protected HowayResult process(UserLoginInput input, UserLoginOutput output) {
         return switch (input.inChomm.loginType) {
-            case NAMEANDPASS -> userIsExist(input, output);
-            case TELANDPASS -> telIsExist(input, output);
-            default -> HowayResult.createFailResult(StatusCode.LOGINTYPENOTSURPPORT, output);
+            case NAME_AND_PASS -> userIsExist(input, output);
+            case TEL_AND_PASS -> telIsExist(input, output);
+            default -> HowayResult.createFailResult(StatusCode.LOGIN_TYPE_NOT_SURPPORT, output);
         };
     }
 
@@ -79,7 +77,7 @@ public class UserLoginProcessor extends CommonProcessor<UserLoginInput, UserLogi
      */
     private HowayResult telIsExist(UserLoginInput input, UserLoginOutput output) {
         User user = service.findByTel(input.inChomm.tel);
-        service.free();
+        //service.free();
         return getUserExist(input, output, user);
     }
 
@@ -91,7 +89,7 @@ public class UserLoginProcessor extends CommonProcessor<UserLoginInput, UserLogi
      */
     private HowayResult userIsExist(UserLoginInput input, UserLoginOutput output) {
         User user = service.findByName(input.inChomm.name);
-        service.free();
+        //service.free();
         return getUserExist(input, output, user);
     }
 
@@ -104,15 +102,15 @@ public class UserLoginProcessor extends CommonProcessor<UserLoginInput, UserLogi
      */
     private HowayResult getUserExist(UserLoginInput input, UserLoginOutput output, User user) {
         if( user == null ){
-            return HowayResult.createFailResult(StatusCode.USEREMPTY, output);
+            return HowayResult.createFailResult(StatusCode.USER_EMPTY, output);
         }
         if(StringUtils.isNotEmpty(input.inChomm.password)){
             input.inChomm.password = HowayEncrypt.md5(user.getName()+input.inChomm.password);
             if(!input.inChomm.password.equals(user.getPassword())){
-                return HowayResult.createFailResult(StatusCode.PASSWORDERROR,output);
+                return HowayResult.createFailResult(StatusCode.PASSWORD_ERROR,output);
             }
         }
-        System.out.println("uid:"+user.getId() + " name:"+user.getName() + " pass:"+user.getPassword());
+        //logger.info("uid:"+user.getId() + " name:"+user.getName() + " pass:"+user.getPassword());
         output.token = accessToken.getToken(user.getId(),user.getName(),user.getPassword(),APP_KEY,APP_SECRET);
         return HowayResult.createSuccessResult(output);
     }
@@ -126,8 +124,8 @@ public class UserLoginProcessor extends CommonProcessor<UserLoginInput, UserLogi
      */
     private boolean isCanLogin(UserLoginInput input,UserLoginOutput output){
         return switch (input.inChomm.loginType) {
-            case NAMEANDPASS -> nameAndPass(input,output);
-            case TELANDPASS -> telAndPass(input,output);
+            case NAME_AND_PASS -> nameAndPass(input,output);
+            case TEL_AND_PASS -> telAndPass(input,output);
             default -> false;
         };
     }

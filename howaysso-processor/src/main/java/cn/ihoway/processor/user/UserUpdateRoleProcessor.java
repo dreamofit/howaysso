@@ -6,10 +6,10 @@ import cn.ihoway.entity.User;
 import cn.ihoway.impl.UserServiceImpl;
 import cn.ihoway.processor.user.io.UserUpdateInput;
 import cn.ihoway.processor.user.io.UserUpdateOutput;
-import cn.ihoway.provider.security.HowayAccessToken;
 import cn.ihoway.service.UserService;
 import cn.ihoway.type.AuthorityLevel;
 import cn.ihoway.type.StatusCode;
+import cn.ihoway.util.HowayContainer;
 import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
 import org.apache.commons.lang.StringUtils;
@@ -23,13 +23,12 @@ import java.util.Arrays;
 public class UserUpdateRoleProcessor extends CommonProcessor<UserUpdateInput, UserUpdateOutput> {
 
     private final HowayLog logger = new HowayLog(UserUpdateRoleProcessor.class);
-    private final HowayAccessToken accessToken = new HowayAccessToken();
-    private final UserService service = new UserServiceImpl();
+    private final UserService service = (UserServiceImpl) HowayContainer.getBean("userServiceImpl");
 
     @Override
     protected StatusCode dataCheck(UserUpdateInput input){
         if(StringUtils.isEmpty(input.token) || input.inChomm.uid == null || input.inChomm.role == null){
-            return StatusCode.FIELDMISSING;
+            return StatusCode.FIELD_MISSING;
         }
         return StatusCode.SUCCESS;
     }
@@ -37,13 +36,16 @@ public class UserUpdateRoleProcessor extends CommonProcessor<UserUpdateInput, Us
     @Override
     protected HowayResult process(UserUpdateInput input, UserUpdateOutput output) {
         User user = service.findById(input.inChomm.uid);
+        if (user == null) {
+            return HowayResult.createFailResult(StatusCode.USER_EMPTY, output);
+        }
         user.setRole(input.inChomm.role);
         User operateor;
         try {
             operateor = accessToken.getUserByToken(input.token);
         } catch (Exception e) {
             logger.error(Arrays.toString(e.getStackTrace()));
-            return HowayResult.createFailResult(StatusCode.JAVAEXCEPTION,output);
+            return HowayResult.createFailResult(StatusCode.JAVA_EXCEPTION,output);
         }
         if(service.updateUser(user) == 0){
             logger.info("更新成功");

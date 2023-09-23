@@ -5,8 +5,14 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
+/**
+ * 处理用户请求
+ */
 public class HowayRequest {
 
+    /**
+     * 获取请求的ip地址
+     */
     public static String getIpAddr(HttpServletRequest request){
         HowayLog logger = new HowayLog(HowayRequest.class);
 

@@ -57,7 +57,7 @@ public class User implements Serializable, Cloneable {
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        return (User) super.clone();
+        return super.clone();
     }
 
 }

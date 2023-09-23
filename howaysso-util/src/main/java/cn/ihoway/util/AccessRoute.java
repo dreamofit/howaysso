@@ -33,7 +33,7 @@ public class AccessRoute {
         String outputName = String.valueOf(parser.getValueFromElement(element,"output"));
 
         if(StringUtils.isBlank(processorName) || StringUtils.isBlank(inputName) || StringUtils.isBlank(outputName)){
-            return HowayResult.createFailResult(StatusCode.CONFIGERROR,null);
+            return HowayResult.createFailResult(StatusCode.CONFIG_ERROR,null);
         }
         return handle(request,processorName,inputName,outputName,map);
     }
@@ -76,7 +76,7 @@ public class AccessRoute {
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
-        return HowayResult.createFailResult(StatusCode.JAVAEXCEPTION,null);
+        return HowayResult.createFailResult(StatusCode.JAVA_EXCEPTION,null);
     }
 
     /**

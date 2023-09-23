@@ -31,9 +31,9 @@ public class UserController {
     @RequestMapping(value = "/login", method = { RequestMethod.POST })
     public String login2(@RequestBody JSONObject user, HttpSession session, HttpServletRequest request, HttpServletResponse response){
         if(StringUtils.isNotBlank(user.getString("name"))){
-            user.put("loginType",LoginType.NAMEANDPASS);
+            user.put("loginType",LoginType.NAME_AND_PASS);
         }else if(StringUtils.isNotBlank(user.getString("tel"))){
-            user.put("loginType",LoginType.TELANDPASS);
+            user.put("loginType",LoginType.TEL_AND_PASS);
         }
         HowayResult rs = AccessRoute.handle(request,"login",user);
         try {
@@ -59,6 +59,9 @@ public class UserController {
         return rs.toString();
     }
 
+    /**
+     * 用户本人进行信息修改操作
+     */
     @CrossOrigin
     @RequestMapping(value = "", method = { RequestMethod.PUT })
     public String update(@RequestBody JSONObject user,HttpServletRequest request){
@@ -66,6 +69,9 @@ public class UserController {
         return rs.toString();
     }
 
+    /**
+     * 管理员更新用户的权限
+     */
     @CrossOrigin
     @RequestMapping(value = "/{uid}", method = { RequestMethod.PUT })
     public String updateRole(@PathVariable("uid") int uid,@RequestBody JSONObject user,HttpServletRequest request){
@@ -76,6 +82,12 @@ public class UserController {
     }
 
 
+    /**
+     * 查询全部用户信息
+     * @param token 事件编号
+     * @param eventNo 事件编号
+     * @param request 请求
+     */
     @CrossOrigin
     @RequestMapping(value = "", method = { RequestMethod.GET })
     public String selectAllUser(String token,String eventNo,HttpServletRequest request){
@@ -87,11 +99,18 @@ public class UserController {
         return rs.toString();
     }
 
+    /**
+     * 查询某个uid的信息
+     * @param token 事件编号
+     * @param eventNo 事件编号
+     * @param uid 用户id
+     * @param request 请求
+     */
     @CrossOrigin
     @RequestMapping(value = "/{uid}", method = { RequestMethod.GET })
     public String selectByUid(String token,String eventNo,@PathVariable("uid") Integer uid,HttpServletRequest request){
         Map<String,Object> map = new HashMap<>();
-        map.put("type",UserSearchType.ONLYID);
+        map.put("type",UserSearchType.ONLY_ID);
         map.put("uid",uid);
         map.put("token",token);
         map.put("eventNo",eventNo);

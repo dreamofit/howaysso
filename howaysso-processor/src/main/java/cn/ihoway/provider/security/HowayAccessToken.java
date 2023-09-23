@@ -9,8 +9,10 @@ import cn.ihoway.service.UserService;
 import cn.ihoway.type.AlgorithmType;
 import cn.ihoway.type.StatusCode;
 import cn.ihoway.util.HowayConfigReader;
+import cn.ihoway.util.HowayContainer;
 import cn.ihoway.util.HowayEncrypt;
 import cn.ihoway.util.HowayLog;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -20,11 +22,10 @@ import java.util.Random;
  * <p>暂定规则：用户登录时生成token,发起请求时携带token并更新时间，时间大于15Min即超时,需要重新登录,否则允许登录。
  * 首先检查token是否存在且有效
  */
+@Component
 public class HowayAccessToken {
 
     private final HowayLog logger = new HowayLog(HowayAccessToken.class);
-    private final UserService userService = new UserServiceImpl();
-    private final SiteService siteService = new SiteServiceImpl();
 
     public static final int HEAD_PLACEHOLDER = HowayConfigReader.getIntConfig("token.properties","placeHolder.head"); //随机数占用位数
     public static final int ID_PLACEHOLDER = HowayConfigReader.getIntConfig("token.properties","placeHolder.id");; //用户id占用位数
@@ -79,6 +80,7 @@ public class HowayAccessToken {
             User user = getUserByToken(token);
             return getToken(user.getId(),user.getName(),user.getPassword(),appKey,appSecret);
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error(Arrays.toString(e.getStackTrace()));
             return "";
         }
@@ -91,18 +93,18 @@ public class HowayAccessToken {
      * @param password 密码
      * @return true or false
      */
-    protected StatusCode isToekenRule(String token,String name,String password){
+    protected StatusCode isTokenRule(String token, String name, String password){
         //logger.info("token:"+token);
         int len = HEAD_PLACEHOLDER + ID_PLACEHOLDER + ALGORITHM_PLACEHOLDER*2 + NAME_PASSWORD_PLACEHOLDER + APP_KEY_PLACEHOLDER + APP_KEY_APP_SECRET_PLACEHOLDER + TIMESTAMP_PLACEHOLDER+SIGN_PLACEHOLDER;
         if(token.length() != len){
             logger.info("token长度异常！");
-            return StatusCode.TOKENERROR;
+            return StatusCode.TOKEN_ERROR;
         }
         //logger.info("len:"+len);
         //规则一：前面22经过md5加密后与后四位一致
         if(!token.substring(len-SIGN_PLACEHOLDER,len).equals(HowayEncrypt.encrypt(token.substring(0,len-SIGN_PLACEHOLDER),AlgorithmType.MD5.getAlgorithm(),SIGN_PLACEHOLDER))){
             logger.info("token签名异常！");
-            return StatusCode.TOKENERROR;
+            return StatusCode.TOKEN_ERROR;
         }
 
         int start = HEAD_PLACEHOLDER + ID_PLACEHOLDER;
@@ -111,13 +113,13 @@ public class HowayAccessToken {
         int algorithm = getAlgorithm(token.substring(start,end));
         if(algorithm < 0){
             logger.info("token随机算法1异常");
-            return StatusCode.TOKENERROR;
+            return StatusCode.TOKEN_ERROR;
         }
         start = end;
         end += NAME_PASSWORD_PLACEHOLDER;
         if(!token.substring(start,end).equals(HowayEncrypt.encrypt(name+password,AlgorithmType.values()[algorithm].getAlgorithm(),NAME_PASSWORD_PLACEHOLDER))){
             logger.info("token用户和密码加密异常" + token.substring(start,end) + " " + HowayEncrypt.encrypt(name+password,AlgorithmType.values()[algorithm].getAlgorithm(),NAME_PASSWORD_PLACEHOLDER));
-            return StatusCode.TOKENERROR;
+            return StatusCode.TOKEN_ERROR;
         }
         //规则三，获取app_key，查询数据库中是否存在该key,并获取想应的secret
         end += APP_KEY_PLACEHOLDER;
@@ -126,11 +128,11 @@ public class HowayAccessToken {
             site = getSiteByToken(token);
         } catch (Exception e) {
             logger.error(Arrays.toString(e.getStackTrace()));
-            return StatusCode.JAVAEXCEPTION;
+            return StatusCode.JAVA_EXCEPTION;
         }
         if(site == null){
             logger.info("token appkey失效或者错误！");
-            return StatusCode.TOKENERROR;
+            return StatusCode.TOKEN_ERROR;
         }
         String appKey = site.getAppkey();
         String appSecret = site.getAppsecret();
@@ -142,13 +144,13 @@ public class HowayAccessToken {
         algorithm = getAlgorithm(token.substring(start,end));
         if(algorithm < 0){
             logger.info("token随机算法2异常");
-            return StatusCode.TOKENERROR;
+            return StatusCode.TOKEN_ERROR;
         }
         start = end;
         end += APP_KEY_APP_SECRET_PLACEHOLDER;
         if(!token.substring(start, end).equals(HowayEncrypt.encrypt(appKey + appSecret, AlgorithmType.values()[algorithm].getAlgorithm(), APP_KEY_APP_SECRET_PLACEHOLDER))){
             logger.info("token key和secret加密异常");
-            return StatusCode.TOKENERROR;
+            return StatusCode.TOKEN_ERROR;
         }
         start = end;
         end += TIMESTAMP_PLACEHOLDER;
@@ -156,39 +158,42 @@ public class HowayAccessToken {
         long diff = (System.currentTimeMillis() - timestamp) / 1000 / 60;
         if(diff > EXPIRATION_TIME){
             logger.info("token已超时");
-            return StatusCode.TOKENTIMEOUT;
+            return StatusCode.TOKEN_TIMEOUT;
         }
         return StatusCode.SUCCESS;
     }
 
     private Site getSiteByToken(String token) throws Exception{
+        SiteService siteService = (SiteServiceImpl) HowayContainer.getBean("siteServiceImpl");
         int start = HEAD_PLACEHOLDER + ID_PLACEHOLDER + ALGORITHM_PLACEHOLDER + NAME_PASSWORD_PLACEHOLDER;
         int end = start + APP_KEY_PLACEHOLDER;
         String appKey = token.substring(start,end);
         return siteService.findSiteByAppKey(appKey);
     }
 
-    public StatusCode isToekenRule(String token, int level) {
+    public StatusCode isTokenRule(String token, int level) {
         User user;
         try {
             user = getUserByToken(token);
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error(Arrays.toString(e.getStackTrace()));
-            return StatusCode.JAVAEXCEPTION;
+            return StatusCode.JAVA_EXCEPTION;
         }
         if(user == null){
             logger.info("用户不存在");
-            return StatusCode.TOKENERROR;
+            return StatusCode.TOKEN_ERROR;
         }
         if(user.getRole() < level){
             logger.info("用户"+user.getName()+"权限不足");
             logger.info(user.getName()+"等级:"+user.getRole()+" 最低权限要求:"+level);
-            return StatusCode.PERMISSIONDENIED;
+            return StatusCode.PERMISSION_DENIED;
         }
-        return isToekenRule(token,user.getName(),user.getPassword());
+        return isTokenRule(token,user.getName(),user.getPassword());
     }
 
     public User getUserByToken(String token) throws Exception{
+        UserService userService = (UserServiceImpl) HowayContainer.getBean("userServiceImpl");
         String uidStr = moveLeftLetter(token.substring(HEAD_PLACEHOLDER,HEAD_PLACEHOLDER + ID_PLACEHOLDER));
         int uid = Integer.parseInt(uidStr);
         return userService.findById(uid);

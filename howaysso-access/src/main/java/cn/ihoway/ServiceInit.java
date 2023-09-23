@@ -18,4 +18,5 @@ public class ServiceInit {
         SpringApplication.run(ServiceInit.class, args);
         logger.info("*** howaysso服务已经启动 ***");
     }
+
 }

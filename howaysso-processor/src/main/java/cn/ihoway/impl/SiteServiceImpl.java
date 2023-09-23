@@ -5,9 +5,11 @@ import cn.ihoway.entity.Site;
 import cn.ihoway.service.SiteService;
 import cn.ihoway.util.MybatisUtils;
 import org.apache.ibatis.session.SqlSession;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class SiteServiceImpl implements SiteService {
 
     private final SqlSession sqlSession = MybatisUtils.getSqlSession();

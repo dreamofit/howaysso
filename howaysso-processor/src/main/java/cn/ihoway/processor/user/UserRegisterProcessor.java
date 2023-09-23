@@ -9,6 +9,7 @@ import cn.ihoway.processor.user.io.UserRegisterOutput;
 import cn.ihoway.service.UserService;
 import cn.ihoway.type.StatusCode;
 import cn.ihoway.util.Convert;
+import cn.ihoway.util.HowayContainer;
 import cn.ihoway.util.HowayEncrypt;
 import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
@@ -20,14 +21,14 @@ import org.apache.commons.lang.StringUtils;
 @Processor(name = "UserRegisterProcessor")
 public class UserRegisterProcessor extends CommonProcessor<UserRegisterInput, UserRegisterOutput> {
 
-    private final UserService service = new UserServiceImpl();
+    private final UserService service = (UserServiceImpl) HowayContainer.getBean("userServiceImpl");
     private final HowayLog logger = new HowayLog(UserRegisterProcessor.class);
 
     @Override
     protected StatusCode dataCheck(UserRegisterInput input){
         if(StringUtils.isEmpty(input.inChomm.name)||StringUtils.isEmpty(input.inChomm.password)||StringUtils.isEmpty(input.inChomm.tel)){
             logger.info("用户名、密码或者电话有空值");
-            return StatusCode.FIELDMISSING;
+            return StatusCode.FIELD_MISSING;
         }
         // todo 手机号格式判断、邮箱格式判断（前端也需要进行控制）
         return StatusCode.SUCCESS;
@@ -43,10 +44,10 @@ public class UserRegisterProcessor extends CommonProcessor<UserRegisterInput, Us
         }else{
             if( user2 == null ){
                 logger.info("用户名重复！");
-                return HowayResult.createFailResult(StatusCode.DUPLICATENAME,output);
+                return HowayResult.createFailResult(StatusCode.DUPLICATE_NAME,output);
             }else{
                 logger.info("电话号重复");
-                return HowayResult.createFailResult(StatusCode.DUPLICATTEL,output);
+                return HowayResult.createFailResult(StatusCode.DUPLICATE_TEL,output);
             }
         }
 
@@ -60,7 +61,7 @@ public class UserRegisterProcessor extends CommonProcessor<UserRegisterInput, Us
         int r = service.addUser(user);
         if( r != 1){
             logger.info("插入失败");
-            return HowayResult.createFailResult(StatusCode.INSERTERROR,output);
+            return HowayResult.createFailResult(StatusCode.INSERT_ERROR,output);
         }
         logger.info("插入用户成功");
         return HowayResult.createSuccessResult(output);

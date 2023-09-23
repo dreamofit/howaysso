@@ -6,13 +6,16 @@ import cn.ihoway.entity.User;
 import cn.ihoway.service.UserService;
 import cn.ihoway.util.MybatisUtils;
 import org.apache.ibatis.session.SqlSession;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UserServiceImpl implements UserService {
     private final SqlSession sqlSession = MybatisUtils.getSqlSession();
     private final UserDao userDao = sqlSession.getMapper(UserDao.class);
 
+    //添加用户
     @Override
     public int addUser(User user) {
         int rs = userDao.insertSelective(user);
