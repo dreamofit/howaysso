@@ -7,5 +7,6 @@ RUN apk --update add tzdata && \
     rm -rf /var/cache/apk/*
 ADD howaysso-access/target/howaysso-access-1.0.0.jar howaysso-access-1.0.0.jar
 EXPOSE 8081
+EXPOSE 20880
 #–add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED
 CMD ["java","--add-opens=java.base/java.lang=ALL-UNNAMED","--add-opens=java.base/java.lang.reflect=ALL-UNNAMED","-jar","howaysso-access-1.0.0.jar"]

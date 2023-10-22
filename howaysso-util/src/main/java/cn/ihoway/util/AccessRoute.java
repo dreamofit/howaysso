@@ -1,7 +1,7 @@
 package cn.ihoway.util;
 
 import cn.ihoway.type.StatusCode;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import javax.servlet.http.HttpServletRequest;

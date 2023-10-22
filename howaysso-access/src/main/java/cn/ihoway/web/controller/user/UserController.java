@@ -7,7 +7,7 @@ import cn.ihoway.util.AccessRoute;
 import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;

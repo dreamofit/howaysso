@@ -15,7 +15,7 @@ import cn.ihoway.util.HowayContainer;
 import cn.ihoway.util.HowayEncrypt;
 import cn.ihoway.util.HowayLog;
 import cn.ihoway.util.HowayResult;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.UUID;
 

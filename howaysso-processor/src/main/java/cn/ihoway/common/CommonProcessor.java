@@ -159,6 +159,7 @@ public abstract class CommonProcessor<I extends CommonInput,O extends CommonOutp
             addInput.put("ip",input.ip);
             addInput.put("method",input.method);
             addInput.put("traceId", (String) MDC.get("traceId"));
+            logger.info("addInput:"+JSON.toJSONString(addInput));
 
         }catch (Exception e){
             logger.error("[warning] input日志写入失败，cause by :" + e.getCause());
