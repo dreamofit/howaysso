@@ -49,6 +49,7 @@ public class TokenAsmIml implements TokenAsm {
         return map;
     }
 
+    
     /**
      * 根据token获取用户信息
      * @param token token
